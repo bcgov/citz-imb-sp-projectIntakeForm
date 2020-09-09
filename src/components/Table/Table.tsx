@@ -22,6 +22,7 @@ export const Table: FC<TableProps> = ({ listName, options, tableTitle }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [components, setComponents] = useState();
   const [view, setView] = useState();
+  const [sortColumns, setSortColumns] = useState();
 
   const populateTable = async () => {
     setIsLoading(true);
@@ -33,9 +34,9 @@ export const Table: FC<TableProps> = ({ listName, options, tableTitle }) => {
     const handleViewChange = (event: React.ChangeEvent<{ value: unknown }>) => {
       setView(event.target.value);
       for (let i = 0; i < list.views.length; i++) {
-        if (event.target.value === list.viewsObject[i].viewTitle) {
-          setColumns(list.viewsObject[i].fields);
-          console.log("list.viewsObject[i].fields :>> ", list.viewsObject[i].fields);
+        if (event.target.value === list.viewColumns[i].viewTitle) {
+          setColumns(list.viewColumns[i].fields);
+          setSortColumns(list.views[i].sort);
         }
       }
     };

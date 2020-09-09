@@ -65,12 +65,12 @@ const getListItems = async (listName: string, list: any) => {
 };
 
 export const getListAndItems = async (listName: string) => {
-  let title, columns, views, list: any, items, viewColumns;
+  let title, columns, views, list: any, items;
   list = await getList(listName);
   items = await getListItems(listName, list);
   views = list.Views.results.map((view: Object) => {
     //@ts-ignore
-    return { title: view.Title, fields: view.ViewFields.Items.results };
+    return { title: view.Title, fields: view.ViewFields.Items.results, sort: view.ViewQuery };
   });
   // console.log("views :>> ", views);
   title = list.Title;
@@ -130,17 +130,31 @@ export const getListAndItems = async (listName: string) => {
         return <a href={rowdata.FileDirRef + "/" + rowdata.ProjectName}>{rowdata.Title}</a>;
       };
     }
+
+    // for (let i = 0; i < 1; i++) {
+    //   let parser: any = new DOMParser();
+    //   let parsedXML = parser.parseFromString(list.Views.results[i].ViewQuery, "text/xml");
+    //   let XMLTagName = parsedXML.getElementsByTagName("FieldRef")[i].outerHTML.getAttribute("Name");
+    // let XMLAttribute = XMLTagName[1].getAttribute("Name");
+
+    // console.log("XMLTagName", XMLTagName);
+    // if (listColumns[field].Title === 1) {
+    //   list.Views.results[i].ViewQuery;
+    // }
+    // }
+
     return fieldObject;
   });
+
   console.log("fieldObject :>> ", columns);
 
-  let viewsObject: any = [];
+  let viewColumns: any = [];
   for (let i = 0; i < list.Views.results.length; i++) {
-    viewsObject.push({
+    viewColumns.push({
       viewTitle: list.Views.results[i].Title,
       fields: list.Views.results[i].ViewFields.Items.results.map((field: string) => {
         // console.log("field :>> ", field);
-        let viewsObject: any = {
+        let viewColumns: any = {
           //@ts-ignore
           title: listColumns[field].Title,
           field: field,
@@ -149,7 +163,7 @@ export const getListAndItems = async (listName: string) => {
         if (listColumns[field].FieldTypeKind === 4) {
           //datetime
           //@ts-ignore
-          viewsObject.render = (rowdata) => {
+          viewColumns.render = (rowdata) => {
             return (
               <Moment fromNowDuring={3600000} format={"dddd, MMMM Do, YYYY @ h:mm a"}>
                 {rowdata[field]}
@@ -161,7 +175,7 @@ export const getListAndItems = async (listName: string) => {
           listColumns[field].FieldTypeKind === 3 //multilinetext
         ) {
           //@ts-ignore
-          viewsObject.render = (rowdata) => {
+          viewColumns.render = (rowdata) => {
             return (
               <div
                 dangerouslySetInnerHTML={{
@@ -171,7 +185,7 @@ export const getListAndItems = async (listName: string) => {
             );
           };
         } else if (listColumns[field].FieldTypeKind === 20) {
-          viewsObject.render = (rowdata: any) => {
+          viewColumns.render = (rowdata: any) => {
             // console.log("rowdata", rowdata);
             return <div>{rowdata.ProjectManager.Title}</div>;
           };
@@ -179,21 +193,68 @@ export const getListAndItems = async (listName: string) => {
 
         if (field === "LinkTitle") {
           //@ts-ignore
-          viewsObject.render = (rowdata) => {
+          viewColumns.render = (rowdata) => {
             return <a href={rowdata.FileDirRef + "/" + rowdata.ProjectName}>{rowdata.Title}</a>;
           };
         }
-        return viewsObject;
+        return viewColumns;
       }),
     });
   }
 
-  console.log("viewsObject :>> ", viewsObject);
-
   // viewColumns = list.Views.results.map((views: string) => {
-  //   viewsObject.push({ title: list.Views.results.ViewFields.Items.results, field: list.Views.results.Title });
-  //   console.log("viewsObject :>> ", viewsObject);
+  //   viewColumns.push({ title: list.Views.results.ViewFields.Items.results, field: list.Views.results.Title });
+  //   console.log("viewColumns :>> ", viewColumns);
   // });
-
-  return { title, columns, views, items, viewsObject };
+  //!Beautify needed
+  let viewSortBy: any[] = [];
+  let parser: any = new DOMParser();
+  let parsedXML = parser.parseFromString(list.Views.results[0].ViewQuery, "text/xml");
+  let XMLTagName = parsedXML.getElementsByTagName("FieldRef");
+  for (let i = 0; i < XMLTagName.length; i++) {
+    viewSortBy.push({ sortTitle: XMLTagName[i].getAttribute("Name"), ascending: XMLTagName[i].getAttribute("Ascending") });
+  }
+  for (let i = 0; i < columns.length; i++) {
+    if (columns[i].field === viewSortBy[0].sortTitle) {
+      if (viewSortBy[0].ascending === null) {
+        columns[i].defaultSort = "asc";
+      } else {
+        columns[i].defaultSort = "desc";
+      }
+    }
+    if (columns[i].field === viewSortBy[1].sortTitle) {
+      if (viewSortBy[1].ascending === null) {
+        columns[i].defaultSort = "asc";
+      } else {
+        columns[i].defaultSort = "desc";
+      }
+    }
+  }
+  //!Beautify needed
+  for (let i = 0; i < viewColumns.length; i++) {
+    for (let j = 0; j < viewColumns[i].fields.length; j++) {
+      if (viewColumns[i].fields[j].field === viewSortBy[0].sortTitle) {
+        if (viewSortBy[1].ascending === null) {
+          viewColumns[i].fields[j].defaultSort = "asc";
+        } else {
+          viewColumns[i].fields[j].defaultSort = "desc";
+        }
+      }
+      if (viewColumns[i].fields[j].field === viewSortBy[1].sortTitle) {
+        if (viewSortBy[1].ascending === null) {
+          viewColumns[i].fields[j].defaultSort = "asc";
+        } else {
+          viewColumns[i].fields[j].defaultSort = "desc";
+        }
+      }
+    }
+  }
+  console.log("viewColumns :>> ", viewColumns);
+  console.log("XMLTagName :>> ", XMLTagName);
+  console.log("parsedXML :>> ", parsedXML);
+  console.log("viewSortBy :>> ", viewSortBy);
+  console.log("columns :>> ", columns);
+  //Name Ascending
+  // [1].getAttribute('category')
+  return { title, columns, views, items, viewColumns };
 };
