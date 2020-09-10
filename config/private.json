@@ -1,9 +1,0 @@
-{
-  "siteUrl": "https://citz.sp.gov.bc.ca/sites/dev/ProjectIntakeForm",
-  "strategy": "AdfsUserCredentials",
-  "username": "adam.spiteri@gov.bc.ca",
-  "password": "2d49ed74d4d98f2edec25946d1b8e13137454556af4f997f1f9801ac8c6c4c0ac144685a006bc93b926146b4ca1c0907cPWu9Mw5mvRSmJQAdepebg==",
-  "relyingParty": "urn:sp.gov.bc.ca",
-  "adfsUrl": "https://sts3.gov.bc.ca",
-  "adfsCookie": "FedAuth"
-}
