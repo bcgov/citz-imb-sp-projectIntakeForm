@@ -6,7 +6,12 @@ import { Table } from "Components";
 export function App() {
   return (
     <div className="App">
-      <Table listName={"Submitted Projects"} />
+      <Table
+        listName={"Submitted Projects"}
+        options={{
+          sorting: true,
+        }}
+      />
     </div>
   );
 }
