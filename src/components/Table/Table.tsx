@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect, Fragment } from "react";
 import MaterialTable, { MTableToolbar } from "material-table";
-import { getListAndItems } from "Components";
+import { getListAndItems, FormDialog } from "Components";
 import { Icons } from "Components";
 import { ListSubheader } from "@material-ui/core";
 import Select from "@material-ui/core/Select";
@@ -11,14 +11,13 @@ interface TableProps {
   tableTitle?: string;
   options?: Object;
   changeItemPermission?: boolean;
-  customActions?: Array<Object>;
+  actions?: any;
 }
 
-export const Table: FC<TableProps> = ({ listName, options, tableTitle }) => {
+export const Table: FC<TableProps> = ({ listName, options, tableTitle, actions }) => {
   const [data, setData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [title, setTitle] = useState("");
-  const [actions, setActions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [components, setComponents] = useState();
   const [view, setView] = useState();
