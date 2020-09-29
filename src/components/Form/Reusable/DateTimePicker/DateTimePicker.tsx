@@ -1,20 +1,21 @@
 import React, { FC } from "react";
 import TextField from "@material-ui/core/TextField";
 import { Field, ErrorMessage } from "formik";
-import "./SingleLineTextField.css";
 import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
 import { withStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import InfoIcon from "@material-ui/icons/Info";
+import DateFnsUtils from "@date-io/date-fns";
+import { DatePicker } from "formik-material-ui-pickers";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import Grid from "@material-ui/core/Grid";
 
-interface SingleLineTextFieldProps {
+interface DatePickerProps {
   label: string;
   name: string;
-  type?: string;
   required?: boolean;
-  toolTip?: string;
   gridSize: any;
+  toolTip?: string;
 }
 
 const HtmlTooltip = withStyles((theme: Theme) => ({
@@ -28,7 +29,7 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
   },
 }))(Tooltip);
 
-export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name, type = "text", required, toolTip, gridSize }) => {
+export const DateTimePicker: FC<DatePickerProps> = ({ label, name, required, toolTip, gridSize }) => {
   return (
     <Grid item xs={gridSize}>
       <HtmlTooltip
@@ -41,18 +42,24 @@ export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name,
       >
         <InfoIcon />
       </HtmlTooltip>
-      <Field
-        required={required}
-        as={TextField}
-        autoComplete="off"
-        label={label}
-        fullWidth={true}
-        type={type}
-        name={name}
-        helperText={<ErrorMessage name={name} />}
-      />
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <Field
+          clearable
+          component={DatePicker}
+          name={name}
+          fullWidth={true}
+          variant="dialog"
+          placeholder="MM/DD/YYYY"
+          format={"MM/dd/yyyy"}
+          // value={selectedStartDate}
+          // onChange={handleStartDateChange}
+          autoOk={true}
+          label={label}
+          required={required}
+        />
+      </MuiPickersUtilsProvider>
     </Grid>
   );
 };
 
-export default SingleLineTextField;
+export default DateTimePicker;

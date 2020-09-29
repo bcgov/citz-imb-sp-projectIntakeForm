@@ -1,6 +1,9 @@
-import React, { FC, useState, useEffect, Fragment } from "react";
+import React, { FC, useState, useEffect, Fragment, useContext } from "react";
 import { Formik, Form, Field } from "formik";
-import { CreateFormContent, useFormType } from "Components";
+import { CreateFormContent, FormTypeContext, FormikPropsContext } from "Components";
+import Container from "@material-ui/core/Container";
+
+import * as Yup from "yup";
 
 export function FormFrame() {
   const [formState, setFormState] = useState("");
@@ -8,15 +11,11 @@ export function FormFrame() {
   const [onSubmit, setOnSubmit] = useState<Function>(() => {});
   const [validationSchema, setValidationSchema] = useState({});
 
-  const [formType, handleFormType] = useFormType();
-
+  let formType = useContext(FormTypeContext);
+  let formikProps: any = useContext(FormikPropsContext);
   return (
     <>
-      {/* <Formik initialValues={initialValues} onSubmit={()=>{}} validationSchema={validationSchema}>
-        <CreateFormContent />
-      </Formik> */}
-      {formType === "New"} ? (
-      <CreateFormContent />)
+      <Container maxWidth="lg">{formType === "New" ? <CreateFormContent /> : formType === "Edit" ? <div>Edit</div> : <div>View</div>}</Container>
     </>
   );
 }

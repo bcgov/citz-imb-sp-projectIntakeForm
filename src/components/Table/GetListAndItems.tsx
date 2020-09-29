@@ -6,7 +6,7 @@ import Moment from "react-moment";
 const getList = async (listName: string) => {
   let list = await GetList({
     listName: listName,
-    expand: "DefaultView,DefaultView/ViewFields,Fields,Items,Views,Views/ViewFields",
+    expand: "DefaultView,DefaultView/ViewFields,Fields,Items,Views,Views/ViewFields,Forms",
   });
   console.log("list :>> ", list);
   return list;
