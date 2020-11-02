@@ -167,6 +167,7 @@ export function GetFormFields(listName: string) {
             TypeDisplayName: listColumns.data.d.results[i].TypeDisplayName,
             Description: listColumns.data.d.results[i].Description,
             DefaultValue: listColumns.data.d.results[i].DefaultValue,
+            Title: listColumns.data.d.results[i].Title,
           });
         }
       }

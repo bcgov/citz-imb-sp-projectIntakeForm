@@ -1,8 +1,9 @@
 import React, { FC, useState, useEffect, Fragment, useContext } from "react";
 import { Formik, Form, Field } from "formik";
-import { CreateFormContent, FormTypeContext, FormikPropsContext } from "Components";
+import { CreateFormContent, FormTypeContext, FormikPropsContext, FormEditor } from "Components";
 import Container from "@material-ui/core/Container";
-
+import "../../../node_modules/react-grid-layout/css/styles.css";
+import "../../../node_modules/react-resizable/css/styles.css";
 import * as Yup from "yup";
 
 export function FormFrame() {
@@ -15,7 +16,8 @@ export function FormFrame() {
   let formikProps: any = useContext(FormikPropsContext);
   return (
     <>
-      <Container maxWidth="lg">{formType === "New" ? <CreateFormContent /> : formType === "Edit" ? <div>Edit</div> : <div>View</div>}</Container>
+      {/* <Container maxWidth="lg">{formType === "New" ? <CreateFormContent /> : formType === "Edit" ? <div>Edit</div> : <div>View</div>}</Container> */}
+      <FormEditor />
     </>
   );
 }

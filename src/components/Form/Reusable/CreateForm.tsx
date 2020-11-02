@@ -4,7 +4,16 @@ import React, { useEffect, useState } from "react";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Grid from "@material-ui/core/Grid";
 import Dropzone from "react-dropzone-uploader";
-import { GetFormFields, MultiLineTextField, SingleLineTextField, DateTimePicker, GetFormSettings, DropDown, HandleSubmit } from "Components";
+import {
+  HandleAttachments,
+  GetFormFields,
+  MultiLineTextField,
+  SingleLineTextField,
+  DateTimePicker,
+  GetFormSettings,
+  DropDown,
+  CreateListItem,
+} from "Components";
 import "react-dropzone-uploader/dist/styles.css";
 import PublishIcon from "@material-ui/icons/Publish";
 import Button from "@material-ui/core/Button";
@@ -20,7 +29,7 @@ export const CreateFormContent = () => {
 
   const getFormFields = async () => {
     let returnedFields: any = await GetFormFields("Submitted Projects");
-    let returnedSettings: any = await GetFormSettings("IntakeFormSettings");
+    let returnedSettings: any = await GetFormSettings("Intake Form Settings");
     let settings: any = {};
     for (let j = 0; j < returnedSettings.length; j++) {
       settings[returnedSettings[j].InternalName] = {
@@ -155,7 +164,7 @@ export const CreateFormContent = () => {
   }, []);
 
   GetFormFields("Submitted Projects");
-  GetFormSettings("IntakeFormSettings");
+  GetFormSettings("Intake Form Settings");
 
   const getUploadParams = () => {};
 
@@ -195,8 +204,13 @@ export const CreateFormContent = () => {
       {initialValues ? (
         <Formik
           initialValues={initialValues}
-          onSubmit={(formValues) => {
-            HandleSubmit(formValues, "Submitted Projects", filesToUpload);
+          onSubmit={async (formValues) => {
+            try {
+              const CreateListItemResponse = await CreateListItem(formValues, "Submitted Projects");
+              const HandleAttachmentRepsonse = await HandleAttachments("Submitted Projects", CreateListItemResponse, filesToUpload);
+            } catch (error) {
+              console.log(error);
+            }
           }}
           validationSchema={validationSchema}
         >

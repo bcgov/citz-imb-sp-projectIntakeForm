@@ -53,7 +53,6 @@
 // OutcomeChoice
 // MaxItems	Must not be used. The value = 31.
 
-import React from "react";
 import axios from "axios";
 
 export function GetFormSettings(listName: string) {
@@ -69,7 +68,7 @@ export function GetFormSettings(listName: string) {
   return new Promise((resolve, reject) => {
     axios({
       method: "get",
-      url: APIurl + "/_api/web/lists/getbytitle('" + listName + "')/Items?$orderby=InternalName asc",
+      url: APIurl + "/_api/web/lists/getbytitle('" + listName + "')/Items", //?$orderby=InternalName asc
       headers: {
         Accept: "application/json;odata=verbose",
         //@ts-ignore
@@ -81,13 +80,16 @@ export function GetFormSettings(listName: string) {
       let formFields = [];
       for (let i = 0; i < listColumns.data.d.results.length; i++) {
         formFields.push({
-          InternalName: listColumns.data.d.results[i].InternalName,
-          FieldWidth: listColumns.data.d.results[i].FieldWidth,
-          VerticalPosition: listColumns.data.d.results[i].VeritcalPosition,
+          // InternalName: listColumns.data.d.results[i].InternalName,
+          // w: listColumns.data.d.results[i].w,
+          // y: listColumns.data.d.results[i].y,
+          // x: listColumns.data.d.results[i].x,
           Title: listColumns.data.d.results[i].Title,
-          FieldType: listColumns.data.d.results[i].FieldType,
+          JSON: listColumns.data.d.results[i].JSON,
+          itemID: listColumns.data.d.results[i].ID,
         });
       }
+      console.log("formFields :>> ", formFields);
       resolve(formFields);
     });
   });

@@ -1,14 +1,14 @@
 import React, { FC } from "react";
 import TextField from "@material-ui/core/TextField";
 import { Field, ErrorMessage } from "formik";
-import "./SingleLineTextField.css";
 import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
 import { withStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import InfoIcon from "@material-ui/icons/Info";
 import Grid from "@material-ui/core/Grid";
+const EditableLabel = require("react-inline-editing");
 
-interface SingleLineTextFieldProps {
+interface InlineEditListProps {
   label: string;
   name: string;
   type?: string;
@@ -28,7 +28,22 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
   },
 }))(Tooltip);
 
-export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name, type = "text", required, toolTip, gridSize }) => {
+const EditableTextBox = () => {
+  return (
+    <EditableLabel
+      text="Hello!"
+      labelClassName="myLabelClass"
+      inputClassName="myInputClass"
+      inputWidth="200px"
+      inputHeight="25px"
+      inputMaxLength="50"
+      labelFontWeight="bold"
+      inputFontWeight="bold"
+    />
+  );
+};
+
+export const InlineEditList: FC<InlineEditListProps> = ({ label, name, type = "text", required, toolTip, gridSize }) => {
   return (
     <Grid item xs={gridSize}>
       <HtmlTooltip
@@ -43,7 +58,7 @@ export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name,
       </HtmlTooltip>
       <Field
         required={required}
-        as={TextField}
+        as={EditableTextBox}
         autoComplete="off"
         label={label}
         fullWidth={true}
@@ -55,4 +70,4 @@ export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name,
   );
 };
 
-export default SingleLineTextField;
+export default InlineEditList;

@@ -23,6 +23,9 @@ interface DropDownProps {
   gridSize: any;
   toolTip?: string;
   required?: boolean;
+  handleShowChoices?: Function;
+  setFieldValue?: Function;
+  setFieldName?: string;
 }
 
 interface MaterialUISelectFieldProps extends FieldInputProps<string> {
@@ -30,6 +33,9 @@ interface MaterialUISelectFieldProps extends FieldInputProps<string> {
   children: ReactNode;
   label: string;
   required?: boolean;
+  handleShowChoices?: Function;
+  setFieldValue?: Function;
+  setFieldName?: string;
 }
 
 const HtmlTooltip = withStyles((theme: Theme) => ({
@@ -43,11 +49,34 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
   },
 }))(Tooltip);
 
-const MaterialUISelectField: React.FC<MaterialUISelectFieldProps> = ({ errorMessage, label, children, value, name, onChange, onBlur, required }) => {
+const MaterialUISelectField: React.FC<MaterialUISelectFieldProps> = ({
+  errorMessage,
+  label,
+  children,
+  value,
+  name,
+  onChange,
+  onBlur,
+  required,
+  handleShowChoices = () => {},
+  setFieldValue = () => {
+    console.log("no set Field Function Provided");
+  },
+  setFieldName,
+}) => {
   return (
     <FormControl fullWidth={true} required={required}>
       <InputLabel>{label}</InputLabel>
-      <Select name={name} onChange={onChange} value={value}>
+      <Select
+        name={name}
+        onChange={(event) => {
+          console.log("value :>> ", event);
+          handleShowChoices(event.target.value);
+          setFieldValue(setFieldName, "");
+          onChange(event);
+        }}
+        value={value}
+      >
         {children}
       </Select>
       <FormHelperText>{errorMessage}</FormHelperText>
@@ -55,7 +84,7 @@ const MaterialUISelectField: React.FC<MaterialUISelectFieldProps> = ({ errorMess
   );
 };
 
-export const DropDown: FC<DropDownProps> = ({ items, name, label, gridSize, toolTip, required }) => {
+export const DropDown: FC<DropDownProps> = ({ setFieldName, items, name, label, gridSize, toolTip, required, handleShowChoices, setFieldValue }) => {
   // console.log("dropDownValue :>> ", items);
   return (
     <Grid item xs={gridSize}>
@@ -69,7 +98,16 @@ export const DropDown: FC<DropDownProps> = ({ items, name, label, gridSize, tool
       >
         <InfoIcon />
       </HtmlTooltip>
-      <Field name={name} as={MaterialUISelectField} label={label} errorMessage={<ErrorMessage name={name} />} required={required}>
+      <Field
+        handleShowChoices={handleShowChoices}
+        setFieldValue={setFieldValue}
+        name={name}
+        as={MaterialUISelectField}
+        label={label}
+        errorMessage={<ErrorMessage name={name} />}
+        required={required}
+        setFieldName={setFieldName}
+      >
         {items.map((item, index) => (
           <MenuItem key={item.value} value={item.value}>
             {item.value}
