@@ -61,10 +61,12 @@ export function GetFormSettings(listName: string) {
   let APIurl = "";
   if (_spPageContextInfo !== undefined) {
     //@ts-ignore
-    APIurl = _spPageContextInfo.siteAbsoluteUrl;
+    APIurl = _spPageContextInfo.webAbsoluteUrl;
   } else {
     APIurl = "http://localhost:8081";
   }
+  console.log("APIurl", APIurl);
+
   return new Promise((resolve, reject) => {
     axios({
       method: "get",
@@ -89,7 +91,7 @@ export function GetFormSettings(listName: string) {
           itemID: listColumns.data.d.results[i].ID,
         });
       }
-      console.log("formFields :>> ", formFields);
+      //console.log("formFields :>> ", formFields);
       resolve(formFields);
     });
   });

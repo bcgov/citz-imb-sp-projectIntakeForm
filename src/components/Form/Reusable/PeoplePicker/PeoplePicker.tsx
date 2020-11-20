@@ -1,11 +1,11 @@
 import React, { FC, useEffect, useState } from "react";
 import { InputLabel } from "@material-ui/core";
-import { Field } from "formik";
 import Grid from "@material-ui/core/Grid";
 import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import InfoIcon from "@material-ui/icons/Info";
 import { withStyles, Theme } from "@material-ui/core/styles";
+import { usePeoplePickerFunctionality } from "Components";
 
 //Create a default prop interface for, Type and isRequired(?)
 interface PeoplePickerProps {
@@ -20,7 +20,7 @@ interface PeoplePickerProps {
   pGetUserInfo?: any;
   ptestPerson?: any;
   toolTip?: string;
-  gridSize: any;
+  gridSize?: any;
 }
 const HtmlTooltip = withStyles((theme: Theme) => ({
   tooltip: {
@@ -32,14 +32,6 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
     display: "block",
   },
 }))(Tooltip);
-
-//Add the required JS files from SharePoint, needed for People Picker to render.
-const GetPPScriptFiles: any = (filename: any) => {
-  const scriptEle = document.createElement("script");
-  scriptEle.setAttribute("type", "text/javascript");
-  scriptEle.setAttribute("src", "/_layouts/15/" + filename);
-  document.getElementsByTagName("head")[0].appendChild(scriptEle);
-};
 
 //People Picker Component
 export const PeoplePicker: FC<PeoplePickerProps> = ({
@@ -53,75 +45,10 @@ export const PeoplePicker: FC<PeoplePickerProps> = ({
   pLabel = "",
   pGetUserInfo,
   ptestPerson,
-  gridSize,
+  gridSize = 12,
   toolTip,
 }) => {
-  /*Set State*/
-  const [timeoutSeconds, settimeoutSeconds] = useState(1000); //<-- Development timeout is default(500 mili seconds)
-
-  /* Run on page load*/
-  useEffect(() => {
-    const schema: object = {
-      PrincipalAccountType: pPrincipalAccountType,
-      SearchPrincipalSource: pSearchPrincipalSource,
-      ResolvePrincipalSource: pResolvePrincipalSource,
-      AllowMultipleValues: pAllowMultipleValues,
-      MaximumEntitySuggestions: pMaximumEntitySuggestions,
-      Width: pWidth,
-      titleText: "test",
-      showtooltip: true,
-    };
-
-    const observer = new MutationObserver((mutations) => {
-      let userArray: any = [];
-
-      for (let i = 0; i < mutations[0].addedNodes.length; i++) {
-        userArray.push({
-          //@ts-ignore
-          displayName: mutations[0].addedNodes[i].childNodes[1].title,
-          //@ts-ignore
-          account: mutations[0].addedNodes[i].attributes.sid.value,
-        });
-      }
-      console.log("userArray", userArray);
-      pGetUserInfo(userArray);
-      ptestPerson(userArray.length);
-    });
-
-    GetPPScriptFiles("clienttemplates.js");
-    GetPPScriptFiles("clientforms.js");
-    GetPPScriptFiles("clientpeoplepicker.js");
-    GetPPScriptFiles("autofill.js");
-
-    //@ts-ignore  //!test if SharePoint variable exists, if it does, its production
-    let _spPageContextInfo = window._spPageContextInfo;
-
-    //Equation to set the timeout in seconds based on environment(Development, Production)
-    if (_spPageContextInfo !== undefined) {
-      settimeoutSeconds(0);
-      console.log(timeoutSeconds, "0 = production");
-    } else {
-      console.log(timeoutSeconds, "1000 = Development");
-    }
-
-    //Timeout needed for development to work.  If this is production timeoutSeconds will equal 0
-    //@ts-ignore
-    ExecuteOrDelayUntilScriptLoaded(() => {
-      setTimeout(function () {
-        //@ts-ignore //!ignore for SharePoint loading purposes
-        SPClientPeoplePicker_InitStandaloneControlWrapper(pDivId, null, schema);
-
-        //Need to get observer value
-        let el: any = document.querySelector(`#${pDivId}_TopSpan_ResolvedList`);
-
-        observer.observe(el, { childList: true });
-      }, timeoutSeconds);
-    }, "clientTemplates.js");
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  const [peoplePickerValues] = usePeoplePickerFunctionality(pDivId);
 
   return (
     <Grid item xs={gridSize}>

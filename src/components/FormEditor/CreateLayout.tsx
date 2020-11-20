@@ -30,26 +30,26 @@ export const CreateLayout = async () => {
     returnedFields[j].x = settings[formConfig[j].i].x;
     returnedFields[j].ID = settings[formConfig[j].i].ID;
     returnedFields[j].title = settings[formConfig[j].i].Title;
+    returnedFields[j].i = settings[formConfig[j].i].InternalName;
     returnedFields[j].index = j;
+    returnedFields[j].internalName = settings[formConfig[j].i].InternalName;
     returnedFields[j].render = getRender(returnedFields[j].Title, returnedFields[j].FieldType, returnedFields[j].Choices);
   }
+  console.log("returnedFields :>> ", returnedFields);
 
-  returnedFields.sort((a: any, b: any) => {
-    // Use toUpperCase() to ignore character casing
-    const fieldA = a.VerticalPosition;
-    const fieldB = b.VerticalPosition;
+  // returnedFields.sort((a: any, b: any) => {
+  //   // Use toUpperCase() to ignore character casing
+  //   const fieldA = a.y;
+  //   const fieldB = b.y;
 
-    let comparison = 0;
-    if (fieldA > fieldB) {
-      comparison = 1;
-    } else if (fieldA < fieldB) {
-      comparison = -1;
-    }
-    return comparison;
-  });
-  // console.log("returnedFields :>> ", returnedFields);
+  //   let comparison = 0;
+  //   if (fieldA > fieldB) {
+  //     comparison = 1;
+  //   } else if (fieldA < fieldB) {
+  //     comparison = -1;
+  //   }
+  //   return comparison;
+  // });
 
   return returnedFields;
-
-  // console.log("ValidationSchema :>> ", validationSchema);
 };

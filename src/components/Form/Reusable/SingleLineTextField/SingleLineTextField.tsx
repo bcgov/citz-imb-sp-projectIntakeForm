@@ -6,7 +6,6 @@ import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
 import { withStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import InfoIcon from "@material-ui/icons/Info";
-import Grid from "@material-ui/core/Grid";
 
 interface SingleLineTextFieldProps {
   label: string;
@@ -14,7 +13,6 @@ interface SingleLineTextFieldProps {
   type?: string;
   required?: boolean;
   toolTip?: string;
-  gridSize?: any;
 }
 
 const HtmlTooltip = withStyles((theme: Theme) => ({
@@ -28,9 +26,9 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
   },
 }))(Tooltip);
 
-export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name, type = "text", required, toolTip, gridSize }) => {
+export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name, type = "text", required, toolTip }) => {
   return (
-    <Grid item xs={gridSize}>
+    <>
       <HtmlTooltip
         title={
           <React.Fragment>
@@ -51,7 +49,7 @@ export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name,
         name={name}
         helperText={<ErrorMessage name={name} />}
       />
-    </Grid>
+    </>
   );
 };
 

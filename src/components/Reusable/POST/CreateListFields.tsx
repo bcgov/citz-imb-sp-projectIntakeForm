@@ -1,17 +1,17 @@
 import axios from "axios";
 
-export const CreateListFields = (columnType: any, listName: any, columnTitle: any, choices: any) => {
+export const CreateListFields = (columnType: any, listName: any, columnTitle: any, choices: any = "") => {
   console.log("choices :>> ", choices);
   //@ts-ignore
   let _spPageContextInfo = window._spPageContextInfo;
   let APIurl = "";
   if (_spPageContextInfo !== undefined) {
     //@ts-ignore
-    APIurl = _spPageContextInfo.siteAbsoluteUrl;
+    APIurl = _spPageContextInfo.webAbsoluteUrl;
   } else {
     APIurl = "http://localhost:8081";
   }
-  console.log("columnType :>> ", columnType);
+  //console.log("columnType :>> ", columnType);
   let fieldTypeId: number;
   let fieldTypeName: string;
 
@@ -43,12 +43,12 @@ export const CreateListFields = (columnType: any, listName: any, columnTitle: an
       Title: columnTitle,
     };
     if (choices() === [""]) {
-      console.log('choices() !== [""] :>> ', choices() !== [""]);
-      console.log("choices :>> ", choices());
+      //console.log('choices() !== [""] :>> ', choices() !== [""]);
+      //console.log("choices :>> ", choices());
       apiData.Choices = { results: choices() };
     }
 
-    console.log("apiData :>> ", apiData);
+    //console.log("apiData :>> ", apiData);
 
     axios({
       method: "POST",

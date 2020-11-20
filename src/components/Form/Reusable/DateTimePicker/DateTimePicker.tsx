@@ -14,7 +14,6 @@ interface DatePickerProps {
   label: string;
   name: string;
   required?: boolean;
-  gridSize: any;
   toolTip?: string;
 }
 
@@ -29,9 +28,9 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
   },
 }))(Tooltip);
 
-export const DateTimePicker: FC<DatePickerProps> = ({ label, name, required, toolTip, gridSize }) => {
+export const DateTimePicker: FC<DatePickerProps> = ({ label, name, required, toolTip }) => {
   return (
-    <Grid item xs={gridSize}>
+    <>
       <HtmlTooltip
         title={
           <React.Fragment>
@@ -58,7 +57,7 @@ export const DateTimePicker: FC<DatePickerProps> = ({ label, name, required, too
           required={required}
         />
       </MuiPickersUtilsProvider>
-    </Grid>
+    </>
   );
 };
 

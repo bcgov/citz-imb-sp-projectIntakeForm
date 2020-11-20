@@ -19,7 +19,6 @@
     "mutation-observer": "^1.0.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-dropzone-uploader": "^2.11.0",
     "react-moment": "^0.9.7",
     "react-scripts": "3.4.3",
     "typescript": "^3.7.5"
@@ -56,6 +55,7 @@
     "formik-material-ui-pickers": "0.0.11",
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
+    "react-dropzone-uploader": "^2.11.0",
     "react-grid-layout": "^1.1.1",
     "react-inline-editing": "^1.0.10",
     "react-test-render": "^1.1.2",

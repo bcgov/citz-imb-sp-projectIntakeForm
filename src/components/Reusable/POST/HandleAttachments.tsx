@@ -1,11 +1,11 @@
 export const HandleAttachments = async (listName: any, listItem: any, filesToUpload: any) => {
-  console.log("filesToUpload :>> ", filesToUpload);
+  // console.log("filesToUpload :>> ", filesToUpload);
   //@ts-ignore
   let _spPageContextInfo = window._spPageContextInfo;
   let APIurl = "";
   if (_spPageContextInfo !== undefined) {
     //@ts-ignore
-    APIurl = _spPageContextInfo.siteAbsoluteUrl;
+    APIurl = _spPageContextInfo.webAbsoluteUrl;
   } else {
     APIurl = "http://localhost:8081";
   }

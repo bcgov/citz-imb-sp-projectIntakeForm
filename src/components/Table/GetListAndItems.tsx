@@ -8,13 +8,13 @@ const getList = async (listName: string) => {
     listName: listName,
     expand: "DefaultView,DefaultView/ViewFields,Fields,Items,Views,Views/ViewFields,Forms",
   });
-  console.log("list :>> ", list);
+  //console.log("list :>> ", list);
   return list;
 };
 
 const getListItems = async (listName: string, list: any) => {
-  let userFieldNamesSelect: never[] = [];
-  let userFieldNamesExpand = [];
+  let userFieldNamesSelect: any[] = [];
+  let userFieldNamesExpand: any = [];
   //@ts-ignore
   for (let i = 0; i < list.Fields.results.length; i++) {
     // @ts-ignore
@@ -55,18 +55,44 @@ const getListItems = async (listName: string, list: any) => {
     }
   }
 
-  let items = await GetListItems({
+  let tempItems = await GetListItems({
     listName: listName,
     expand: userFieldNamesExpand,
     select: userFieldNamesSelect,
   });
-  // console.log("items :>> ", items);
-  return items;
+  let formattedItems = () => {
+    let itemsFormatted: any = [];
+    for (let i = 0; i < tempItems.length; i++) {
+      let itemFormatted: any = {};
+      //@ts-ignore
+      for (const [key, value] of Object.entries(tempItems[i])) {
+        //@ts-ignore
+        if (value != null) {
+          //@ts-ignore
+          if (value.Title) {
+            //@ts-ignore
+            itemFormatted[key] = value.Title;
+          } else {
+            itemFormatted[key] = value;
+          }
+        }
+      }
+      itemsFormatted.push(itemFormatted);
+    }
+    return itemsFormatted;
+  };
+  console.log("tempItems :>> ", tempItems);
+  console.log("formattedItems :>> ", formattedItems());
+  return formattedItems;
 };
 
-export const getListAndItems = async (listName: string) => {
+// console.log("items :>> ", items);
+// return items;
+
+export const GetListAndItems = async (listName: string) => {
   let title, columns, views, list: any, items;
   list = await getList(listName);
+  console.log("list :>> ", list);
   items = await getListItems(listName, list);
   views = list.Views.results.map((view: Object) => {
     //@ts-ignore
@@ -86,7 +112,7 @@ export const getListAndItems = async (listName: string) => {
   // console.log("listColumns :>> ", listColumns);
   //Table Columns
   columns = list.DefaultView.ViewFields.Items.results.map((field: string) => {
-    // console.log("field :>> ", field);
+    // console.log("fieldwqw12qdqw :>> ", field);
     let fieldObject: any = {
       //@ts-ignore
       title: listColumns[field].Title,
@@ -118,30 +144,20 @@ export const getListAndItems = async (listName: string) => {
         );
       };
     } else if (listColumns[field].FieldTypeKind === 20) {
+      console.log("field :>> ", field);
       fieldObject.render = (rowdata: any) => {
-        // console.log("rowdata", rowdata);
-        return <div>{rowdata.ProjectManager.Title}</div>;
+        {
+          return <div>{rowdata[field]}</div>;
+        }
       };
     }
 
     if (field === "LinkTitle") {
       //@ts-ignore
       fieldObject.render = (rowdata) => {
-        return <a href={rowdata.FileDirRef + "/" + rowdata.ProjectName}>{rowdata.Title}</a>;
+        return <>{rowdata.Title}</>;
       };
     }
-
-    // for (let i = 0; i < 1; i++) {
-    //   let parser: any = new DOMParser();
-    //   let parsedXML = parser.parseFromString(list.Views.results[i].ViewQuery, "text/xml");
-    //   let XMLTagName = parsedXML.getElementsByTagName("FieldRef")[i].outerHTML.getAttribute("Name");
-    // let XMLAttribute = XMLTagName[1].getAttribute("Name");
-
-    // console.log("XMLTagName", XMLTagName);
-    // if (listColumns[field].Title === 1) {
-    //   list.Views.results[i].ViewQuery;
-    // }
-    // }
 
     return fieldObject;
   });
@@ -186,15 +202,14 @@ export const getListAndItems = async (listName: string) => {
           };
         } else if (listColumns[field].FieldTypeKind === 20) {
           viewColumns.render = (rowdata: any) => {
-            // console.log("rowdata", rowdata);
-            return <div>{rowdata.ProjectManager.Title}</div>;
+            return <div>{rowdata[field].Title}</div>;
           };
         }
 
         if (field === "LinkTitle") {
           //@ts-ignore
           viewColumns.render = (rowdata) => {
-            return <a href={rowdata.FileDirRef + "/" + rowdata.ProjectName}>{rowdata.Title}</a>;
+            return <>{rowdata.Title}</>;
           };
         }
         return viewColumns;
@@ -249,11 +264,11 @@ export const getListAndItems = async (listName: string) => {
       }
     }
   }
-  console.log("viewColumns :>> ", viewColumns);
-  console.log("XMLTagName :>> ", XMLTagName);
-  console.log("parsedXML :>> ", parsedXML);
-  console.log("viewSortBy :>> ", viewSortBy);
-  console.log("columns :>> ", columns);
+  // console.log("viewColumns :>> ", viewColumns);
+  // console.log("XMLTagName :>> ", XMLTagName);
+  // console.log("parsedXML :>> ", parsedXML);
+  //console.log("viewSortBy :>> ", viewSortBy);
+  //console.log("columns :>> ", columns);
   //Name Ascending
   // [1].getAttribute('category')
   return { title, columns, views, items, viewColumns };

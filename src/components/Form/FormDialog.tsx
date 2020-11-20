@@ -11,6 +11,7 @@ interface FormDialogProps {
 export const FormDialog: FC<FormDialogProps> = ({ dialogStatus }) => {
   return (
     <div>
+      {/* @ts-ignore */}
       <Dialog fullScreen open={dialogStatus} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
         <DialogContent>

@@ -12,7 +12,7 @@ export const CreateListItem = (formValues: any, listName: any) => {
   // });
 
   Object.keys(formValues).map((formValue, index) => {
-    console.log("formValue :>> ", formValue);
+    //console.log("formValue :>> ", formValue);
     if (formValues[formValue] === null || formValues[formValue] === "") {
       delete formValues[formValue];
     }
@@ -23,7 +23,7 @@ export const CreateListItem = (formValues: any, listName: any) => {
   let APIurl = "";
   if (_spPageContextInfo !== undefined) {
     //@ts-ignore
-    APIurl = _spPageContextInfo.siteAbsoluteUrl;
+    APIurl = _spPageContextInfo.webAbsoluteUrl;
   } else {
     APIurl = "http://localhost:8081";
   }

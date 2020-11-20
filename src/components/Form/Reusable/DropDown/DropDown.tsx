@@ -20,7 +20,6 @@ interface DropDownProps {
   items: any[];
   label: string;
   name?: any;
-  gridSize: any;
   toolTip?: string;
   required?: boolean;
   handleShowChoices?: Function;
@@ -60,7 +59,7 @@ const MaterialUISelectField: React.FC<MaterialUISelectFieldProps> = ({
   required,
   handleShowChoices = () => {},
   setFieldValue = () => {
-    console.log("no set Field Function Provided");
+    //console.log("no set Field Function Provided");
   },
   setFieldName,
 }) => {
@@ -70,7 +69,7 @@ const MaterialUISelectField: React.FC<MaterialUISelectFieldProps> = ({
       <Select
         name={name}
         onChange={(event) => {
-          console.log("value :>> ", event);
+          //console.log("value :>> ", event);
           handleShowChoices(event.target.value);
           setFieldValue(setFieldName, "");
           onChange(event);
@@ -84,10 +83,10 @@ const MaterialUISelectField: React.FC<MaterialUISelectFieldProps> = ({
   );
 };
 
-export const DropDown: FC<DropDownProps> = ({ setFieldName, items, name, label, gridSize, toolTip, required, handleShowChoices, setFieldValue }) => {
+export const DropDown: FC<DropDownProps> = ({ setFieldName, items, name, label, toolTip, required, handleShowChoices, setFieldValue }) => {
   // console.log("dropDownValue :>> ", items);
   return (
-    <Grid item xs={gridSize}>
+    <>
       <HtmlTooltip
         title={
           <React.Fragment>
@@ -114,7 +113,7 @@ export const DropDown: FC<DropDownProps> = ({ setFieldName, items, name, label, 
           </MenuItem>
         ))}
       </Field>
-    </Grid>
+    </>
   );
 };
 export default DropDown;

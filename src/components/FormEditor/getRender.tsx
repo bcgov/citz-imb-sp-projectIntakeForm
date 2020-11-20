@@ -1,38 +1,51 @@
 import React from "react";
-import { DateTimeFormEditor, SelectFormEditor } from "Components";
+import { PeoplePicker, SingleLineTextField, MultiLineTextField, DateTimePicker, DropDown } from "Components";
 import TextField from "@material-ui/core/TextField";
-export function getRender(title: any, fieldType: any, choices: any) {
+// import Dropzone from "react-dropzone-uploader";
+
+export function getRender(title: any, fieldType: any, choices: any, internalName?: any, description?: any, required?: any) {
   switch (fieldType) {
     case "Text":
-      return <TextField label={title} variant="outlined" />;
+      return (
+        <SingleLineTextField label={title} name={internalName} toolTip={description} required={required} />
+
+        // if (!returnedFields[i].DefaultValue) {
+        //   returnedFields[i].DefaultValue = "";
+        // }
+      );
+      // console.log("returnedFields[i].DefaultValue :>> ", returnedFields[i].DefaultValue, returnedFields[i].InternalName);
 
       break;
     case "Note":
-      return <TextField multiline={true} label={title} variant="outlined" />;
+      return <MultiLineTextField label={title} name={internalName} toolTip={description} required={required} />;
+      // if (!returnedFields[i].DefaultValue) {
+      //   returnedFields[i].DefaultValue = "";
+      // }
+      // console.log("returnedFields[i].DefaultValue :>> ", returnedFields[i].DefaultValue, returnedFields[i].InternalName);
 
       break;
     case "DateTime":
-      return <DateTimeFormEditor title={title} />;
-
+      return <DateTimePicker label={title} name={internalName} toolTip={description} />;
+      // if (!returnedFields[i].DefaultValue) {
+      //   returnedFields[i].DefaultValue = null;
+      // }
       break;
     case "Choice":
-      return <SelectFormEditor title={title} values={choices} />;
-
+      return <DropDown label={title} name={internalName} toolTip={description} required={required} items={choices} />;
+      // if (!returnedFields[i].DefaultValue) {
+      //   returnedFields[i].DefaultValue = "";
+      // }
       break;
-    case "Person or Group":
-      return <TextField multiline={true} label={title} variant="outlined" />;
+    case "User":
+      return <PeoplePicker pLabel={title} pDivId={title} />;
 
       break;
     case "Section":
-      return <div>section {title}</div>;
+      return <div>section</div>;
       break;
 
     default:
-      return <div>{title}</div>;
+      return "";
       break;
   }
 }
-
-// if (!returnedFields[i].DefaultValue) {
-//   returnedFields[i].DefaultValue = null;
-// }

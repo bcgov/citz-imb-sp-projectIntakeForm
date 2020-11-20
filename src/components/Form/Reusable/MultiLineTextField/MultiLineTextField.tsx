@@ -13,7 +13,6 @@ interface MultiLineTextFieldProps {
   type?: string;
   required?: boolean;
   toolTip?: string;
-  gridSize: any;
 }
 
 const HtmlTooltip = withStyles((theme: Theme) => ({
@@ -27,10 +26,9 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
   },
 }))(Tooltip);
 
-export const MultiLineTextField: FC<MultiLineTextFieldProps> = ({ label, name, type = "text", required, toolTip, gridSize }) => {
-  console.log("gridSize :>> ", gridSize);
+export const MultiLineTextField: FC<MultiLineTextFieldProps> = ({ label, name, type = "text", required, toolTip }) => {
   return (
-    <Grid item xs={gridSize}>
+    <>
       <HtmlTooltip
         title={
           <React.Fragment>
@@ -54,7 +52,7 @@ export const MultiLineTextField: FC<MultiLineTextFieldProps> = ({ label, name, t
         name={name}
         helperText={<ErrorMessage name={name} />}
       />
-    </Grid>
+    </>
   );
 };
 

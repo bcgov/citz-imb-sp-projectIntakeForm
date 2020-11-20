@@ -15,7 +15,6 @@ interface SelectFieldProps {
   dropDownValue: any[];
   label: string;
   name?: string;
-  gridSize: any;
   toolTip?: string;
 }
 
@@ -48,9 +47,9 @@ const MaterialUISelectField: FC<MaterialUISelectFieldProps> = ({ errorString, la
   );
 };
 
-export const SelectField: FC<SelectFieldProps> = ({ dropDownValue, name, label, gridSize, toolTip }) => {
+export const SelectField: FC<SelectFieldProps> = ({ dropDownValue, name, label, toolTip }) => {
   return (
-    <Grid item xs={gridSize}>
+    <>
       <HtmlTooltip
         title={
           <React.Fragment>
@@ -68,7 +67,7 @@ export const SelectField: FC<SelectFieldProps> = ({ dropDownValue, name, label, 
           </MenuItem>
         ))}
       </Field>
-    </Grid>
+    </>
   );
 };
 export default SelectField;

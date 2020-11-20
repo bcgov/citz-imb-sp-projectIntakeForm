@@ -62,7 +62,7 @@ export function GetFormFields(listName: string) {
   let APIurl = "";
   if (_spPageContextInfo !== undefined) {
     //@ts-ignore
-    APIurl = _spPageContextInfo.siteAbsoluteUrl;
+    APIurl = _spPageContextInfo.webAbsoluteUrl;
   } else {
     APIurl = "http://localhost:8081";
   }
@@ -79,7 +79,7 @@ export function GetFormFields(listName: string) {
         accept: "application/json;odata=verbose",
       },
     }).then(function (listColumns) {
-      console.log("listColumns :>> ", listColumns);
+      //console.log("listColumns :>> ", listColumns);
       let formFields = [];
       for (let i = 0; i < listColumns.data.d.results.length; i++) {
         if (listColumns.data.d.results[i].InternalName != "ContentType") {

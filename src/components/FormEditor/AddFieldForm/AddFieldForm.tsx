@@ -7,11 +7,10 @@ import "../AddFieldForm/AddFieldForm.css";
 import Grid from "@material-ui/core/Grid";
 import _ from "lodash";
 interface AddFieldFormProps {
-  yPosition?: any;
   handleAddField: Function;
 }
 //@ts-ignore
-export const AddFieldForm: React.FC<AddFieldFormProps> = ({ yPosition, handleAddField }) => {
+export const AddFieldForm: React.FC<AddFieldFormProps> = ({ handleAddField }) => {
   // console.log("handleAddField :>> ", handleAddField);
   const [validationSchema, setValidationSchema] = useState();
   // Yup.object().shape({
@@ -46,13 +45,6 @@ export const AddFieldForm: React.FC<AddFieldFormProps> = ({ yPosition, handleAdd
     };
 
     let fieldTitleCamelCase = _.camelCase(formValues.title);
-    let newItemProperties = {
-      Title: fieldTitleCamelCase,
-      InternalName: fieldTitleCamelCase,
-      w: 2,
-      y: yPosition.yPosition,
-      x: 0,
-    };
 
     handleAddField(formValues); //!ADD THIS BACK AFTER TESTING
     try {
@@ -73,27 +65,35 @@ export const AddFieldForm: React.FC<AddFieldFormProps> = ({ yPosition, handleAdd
       {({ isValid, dirty, setFieldValue }) => (
         <Form>
           <Grid container spacing={3}>
-            <SingleLineTextField required={true} label={"Title"} name={"title"} gridSize={4} toolTip={"Please enter a title for the field"} />
+            <Grid item xs={4}>
+              <SingleLineTextField required={true} label={"Title"} name={"title"} toolTip={"Please enter a title for the field"} />
+            </Grid>
             <br />
-            <DropDown
-              label={"Field Type"}
-              name={"fieldType"}
-              gridSize={4}
-              items={[
-                { value: "Choice" },
-                { value: "Person or Group" },
-                { value: "Single Line of Text" },
-                { value: "Multi Line of Text" },
-                { value: "Date & Time" },
-              ]}
-              toolTip={"Please choose the field type"}
-              required={true}
-              handleShowChoices={handleShowChoices}
-              setFieldValue={setFieldValue}
-              setFieldName={"choices"}
-            />
+            <Grid item xs={4}>
+              {" "}
+              <DropDown
+                label={"Field Type"}
+                name={"fieldType"}
+                items={[
+                  { value: "Choice" },
+                  { value: "Person or Group" },
+                  { value: "Single Line of Text" },
+                  { value: "Multi Line of Text" },
+                  { value: "Date & Time" },
+                ]}
+                toolTip={"Please choose the field type"}
+                required={true}
+                handleShowChoices={handleShowChoices}
+                setFieldValue={setFieldValue}
+                setFieldName={"choices"}
+              />
+            </Grid>
             <br />
-            {showChoices && <MultiLineTextField required={showChoices} label={"Choices"} name={"choices"} gridSize={4} />}
+            {showChoices && (
+              <Grid item xs={4}>
+                <MultiLineTextField required={showChoices} label={"Choices"} name={"choices"} />
+              </Grid>
+            )}
           </Grid>
           <Button type="submit" variant="contained" color="primary">
             Add Field

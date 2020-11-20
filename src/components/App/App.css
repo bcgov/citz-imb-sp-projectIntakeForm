@@ -1,3 +1,48 @@
+button.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-colorInherit {
+  font-size: 0px;
+}
+
+input[type="password"],
+input[type="text"],
+input[type="file"],
+select,
+textarea,
+.ms-inputBox {
+  border: none !important;
+}
+
+input[type="password"],
+input[type="text"],
+input[type="file"],
+select,
+textarea,
+.sp-peoplepicker-topLevel,
+.sp-peoplepicker-topLevelDisabled,
+.sp-peoplepicker-autoFillContainer,
+.ms-inputBox {
+  border: 1px solid #ababab;
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0);
+  color: #444;
+  margin-bottom: 9px;
+}
+.sp-peoplepicker-autoFillContainer,
+.sp-peoplepicker-topLevel,
+.sp-peoplepicker-topLevelDisabled {
+  border: none !important;
+  border-bottom: 1px solid !important;
+  min-width: 96% !important;
+  margin-top: 17px !important;
+}
+
+/* Progress Indicator */
+div#progressFrame {
+  margin: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
 .App {
   text-align: center;
 }
