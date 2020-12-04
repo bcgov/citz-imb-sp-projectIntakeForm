@@ -1,22 +1,26 @@
 import axios from "axios";
+import { GetUserId } from "Components";
 
-export const CreateListItem = (formValues: any, listName: any) => {
+export const CreateListItem = async (formValues: any, listName: any) => {
   let GetItemTypeForListName = (listName: any) => {
     return "SP.Data." + listName.charAt(0).toUpperCase() + listName.split(" ").join("").slice(1) + "ListItem";
   };
 
-  // let filteredFormValues = formValues.map((formValue: any) => {
-  //   if (formValue === null) {
-  //     delete formValue;
-  //   }
-  // });
+  const getUserID = async (valueKey: any) => {
+    let userID: any = await GetUserId(valueKey);
+    console.log("userID", userID);
+    return userID.data.d.Id;
+  };
 
-  Object.keys(formValues).map((formValue, index) => {
-    //console.log("formValue :>> ", formValue);
-    if (formValues[formValue] === null || formValues[formValue] === "") {
-      delete formValues[formValue];
+  for (var key in formValues) {
+    if (formValues[key] === null || formValues[key] === "" || formValues[key].length === 0) {
+      delete formValues[key];
     }
-  });
+    if (Array.isArray(formValues[key])) {
+      formValues[key] = await getUserID(formValues[key][0].Key);
+      console.log("formValues[key] ", formValues[key]);
+    }
+  }
 
   //@ts-ignore
   let _spPageContextInfo = window._spPageContextInfo;
@@ -31,53 +35,54 @@ export const CreateListItem = (formValues: any, listName: any) => {
   formValues.__metadata = {
     type: GetItemTypeForListName(listName),
   };
-  return new Promise((resolve, reject) => {
-    // console.log("formValuesInCreate :>> ", formValues);
-    // resolve();
-    axios({
-      method: "POST",
-      url: APIurl + "/_api/web/lists/GetByTitle('" + listName + "')/items",
-      data: JSON.stringify(formValues),
-      headers: {
-        accept: "application/json;odata=verbose",
-        "content-type": "application/json;odata=verbose",
-        "X-RequestDigest": (document.getElementById("__REQUESTDIGEST")! as HTMLTextAreaElement).value,
-      },
-    })
-      .then(function (listItem) {
-        resolve(listItem);
-      })
-      .catch((error) => {
-        console.groupCollapsed("Error Details");
+  console.log("formValues :>> ", formValues);
 
-        if (error.response) {
-          // The request was made and the server responded with a status code
+  // return new Promise((resolve, reject) => {
+  //   axios({
+  //     method: "POST",
+  //     url: APIurl + "/_api/web/lists/GetByTitle('" + listName + "')/items",
+  //     data: JSON.stringify(formValues),
+  //     headers: {
+  //       accept: "application/json;odata=verbose",
+  //       "content-type": "application/json;odata=verbose",
+  //       "X-RequestDigest": (document.getElementById("__REQUESTDIGEST")! as HTMLTextAreaElement).value,
+  //     },
+  //   })
+  //     .then(function (listItem) {
+  //       console.log("listItem :>> ", listItem);
+  //       resolve(listItem);
+  //     })
+  //     .catch((error) => {
+  //       console.groupCollapsed("Error Details");
 
-          // that falls out of the range of 2xx
+  //       if (error.response) {
+  //         // The request was made and the server responded with a status code
 
-          console.error(error.response.data);
+  //         // that falls out of the range of 2xx
 
-          console.error(error.response.status);
+  //         console.error(error.response.data);
 
-          console.error(error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
+  //         console.error(error.response.status);
 
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+  //         console.error(error.response.headers);
+  //       } else if (error.request) {
+  //         // The request was made but no response was received
 
-          // http.ClientRequest in node.js
+  //         // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
 
-          console.error(error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
+  //         // http.ClientRequest in node.js
 
-          console.error("Error", error.message);
-        }
+  //         console.error(error.request);
+  //       } else {
+  //         // Something happened in setting up the request that triggered an Error
 
-        console.error(error.config);
+  //         console.error("Error", error.message);
+  //       }
 
-        console.groupEnd();
-        reject(error);
-      });
-  });
+  //       console.error(error.config);
+
+  //       console.groupEnd();
+  //       reject(error);
+  //     });
+  // });
 };

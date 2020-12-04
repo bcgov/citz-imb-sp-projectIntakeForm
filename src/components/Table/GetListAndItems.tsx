@@ -72,6 +72,9 @@ const getListItems = async (listName: string, list: any) => {
           if (value.Title) {
             //@ts-ignore
             itemFormatted[key] = value.Title;
+            //@ts-ignore
+          } else if (value.Title || value.__metadata || value.__deferred) {
+            itemFormatted[key] = "";
           } else {
             itemFormatted[key] = value;
           }
@@ -92,7 +95,7 @@ const getListItems = async (listName: string, list: any) => {
 export const GetListAndItems = async (listName: string) => {
   let title, columns, views, list: any, items;
   list = await getList(listName);
-  console.log("list :>> ", list);
+  console.log("items :>> ", items);
   items = await getListItems(listName, list);
   views = list.Views.results.map((view: Object) => {
     //@ts-ignore
@@ -201,8 +204,11 @@ export const GetListAndItems = async (listName: string) => {
             );
           };
         } else if (listColumns[field].FieldTypeKind === 20) {
+          console.log("field :>> ", field);
           viewColumns.render = (rowdata: any) => {
-            return <div>{rowdata[field].Title}</div>;
+            {
+              return <div>{rowdata[field]}</div>;
+            }
           };
         }
 

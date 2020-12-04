@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC, ReactNode, useContext, useState } from "react";
 import { Field, ErrorMessage, FieldInputProps } from "formik";
 import Grid from "@material-ui/core/Grid";
 import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
@@ -10,6 +10,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import { ScoreContext } from "Components";
 
 interface DropDownItem extends FieldInputProps<string> {
   label: string;
@@ -17,7 +18,7 @@ interface DropDownItem extends FieldInputProps<string> {
 }
 
 interface DropDownProps {
-  items: any[];
+  choices: any[];
   label: string;
   name?: any;
   toolTip?: string;
@@ -25,6 +26,7 @@ interface DropDownProps {
   handleShowChoices?: Function;
   setFieldValue?: Function;
   setFieldName?: string;
+  editValue?: any;
 }
 
 interface MaterialUISelectFieldProps extends FieldInputProps<string> {
@@ -35,6 +37,7 @@ interface MaterialUISelectFieldProps extends FieldInputProps<string> {
   handleShowChoices?: Function;
   setFieldValue?: Function;
   setFieldName?: string;
+  editValue?: any;
 }
 
 const HtmlTooltip = withStyles((theme: Theme) => ({
@@ -62,14 +65,28 @@ const MaterialUISelectField: React.FC<MaterialUISelectFieldProps> = ({
     //console.log("no set Field Function Provided");
   },
   setFieldName,
+  editValue,
 }) => {
+  const [previousComponentScore, setPreviousComponentScore] = useState(0);
+  const scoreContext: any = useContext(ScoreContext);
   return (
     <FormControl fullWidth={true} required={required}>
       <InputLabel>{label}</InputLabel>
       <Select
         name={name}
-        onChange={(event) => {
-          //console.log("value :>> ", event);
+        onChange={(event: any) => {
+          console.log('event._targetInst.memoizedProps["data-score"] :>> ', event._targetInst.memoizedProps["data-score"]);
+          //The reason for "formattedComponentScore" is because not all choices will have a score value and they will return NaN if they don't have a score.  The apps reducer function has not been adjusted to account for NaN so we need to convert NaN to 0.
+          let formattedComponentScore: any;
+          if (Number.isNaN(event._targetInst.memoizedProps["data-score"])) {
+            console.log("is not a number");
+            formattedComponentScore = 0;
+          } else {
+            console.log("is a number");
+            formattedComponentScore = event._targetInst.memoizedProps["data-score"];
+          }
+          scoreContext.scoreDispatch([formattedComponentScore, previousComponentScore]);
+          setPreviousComponentScore(formattedComponentScore);
           handleShowChoices(event.target.value);
           setFieldValue(setFieldName, "");
           onChange(event);
@@ -83,8 +100,18 @@ const MaterialUISelectField: React.FC<MaterialUISelectFieldProps> = ({
   );
 };
 
-export const DropDown: FC<DropDownProps> = ({ setFieldName, items, name, label, toolTip, required, handleShowChoices, setFieldValue }) => {
-  // console.log("dropDownValue :>> ", items);
+export const DropDown: FC<DropDownProps> = ({
+  setFieldName,
+  choices,
+  name,
+  label,
+  toolTip,
+  required,
+  handleShowChoices,
+  setFieldValue,
+  editValue = "",
+}) => {
+  // console.log("dropDownValue :>> ", choices);
   return (
     <>
       <HtmlTooltip
@@ -107,11 +134,13 @@ export const DropDown: FC<DropDownProps> = ({ setFieldName, items, name, label, 
         required={required}
         setFieldName={setFieldName}
       >
-        {items.map((item, index) => (
-          <MenuItem key={item.value} value={item.value}>
-            {item.value}
-          </MenuItem>
-        ))}
+        {choices.map((choice, index) => {
+          return (
+            <MenuItem data-score={choice.score} key={choice.value} value={choice.value}>
+              {choice.label}
+            </MenuItem>
+          );
+        })}
       </Field>
     </>
   );

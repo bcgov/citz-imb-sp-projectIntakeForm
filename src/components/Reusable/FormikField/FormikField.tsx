@@ -1,18 +1,19 @@
 import React, { FC } from "react";
 import TextField from "@material-ui/core/TextField";
 import { Field, ErrorMessage } from "formik";
-import "./SingleLineTextField.css";
 import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
 import { withStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import InfoIcon from "@material-ui/icons/Info";
+import { CustomToolTip } from "Components";
 
-interface SingleLineTextFieldProps {
+interface FormikFieldProps {
   label: string;
   name: string;
-  toolTip?: string;
   type?: string;
   required?: boolean;
+  toolTip?: string;
+  render?: any;
 }
 
 const HtmlTooltip = withStyles((theme: Theme) => ({
@@ -26,22 +27,14 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
   },
 }))(Tooltip);
 
-export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name, type = "text", required, toolTip }) => {
+export const FormikField: FC<FormikFieldProps> = ({ label, name, type = "text", required, toolTip, render }) => {
   return (
     <>
-      <HtmlTooltip
-        title={
-          <React.Fragment>
-            <Typography color="inherit">Tip</Typography>
-            {toolTip}
-          </React.Fragment>
-        }
-      >
-        <InfoIcon />
-      </HtmlTooltip>
+      <CustomToolTip toolTip={toolTip} />
+
       <Field
         required={required}
-        as={TextField}
+        as={render}
         autoComplete="off"
         label={label}
         fullWidth={true}
@@ -53,4 +46,4 @@ export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name,
   );
 };
 
-export default SingleLineTextField;
+export default FormikField;

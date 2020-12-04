@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect, Fragment } from "react";
 import MaterialTable, { MTableToolbar } from "material-table";
 import { GetListAndItems, FormDialog, ProgressIndicator } from "Components";
 import { Icons } from "Components";
-import { ListSubheader } from "@material-ui/core";
+import { ListSubheader, Typography } from "@material-ui/core";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 

@@ -1,74 +1,77 @@
-import React, { FC, useEffect, useState } from "react";
-import { InputLabel } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
-import InfoIcon from "@material-ui/icons/Info";
-import { withStyles, Theme } from "@material-ui/core/styles";
-import { usePeoplePickerFunctionality } from "Components";
+import React, { useState, useEffect, FC, useContext } from "react";
+import { usePeoplePicker, FormTypeContext } from "Components";
+import { TextField, Chip } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
 
-//Create a default prop interface for, Type and isRequired(?)
 interface PeoplePickerProps {
-  pPrincipalAccountType?: string;
-  pSearchPrincipalSource?: number;
-  pResolvePrincipalSource?: number;
-  pAllowMultipleValues?: boolean;
-  pMaximumEntitySuggestions?: number;
-  pWidth?: string;
-  pDivId?: string;
-  pLabel?: string;
-  pGetUserInfo?: any;
-  ptestPerson?: any;
-  toolTip?: string;
-  gridSize?: any;
+  label: any;
+  name: any;
+  setFieldValue: any;
+  fieldProps: any;
+  variant?: any;
+  placeholder?: any;
+  currentItem?: any;
 }
-const HtmlTooltip = withStyles((theme: Theme) => ({
-  tooltip: {
-    backgroundColor: "#f5f5f9",
-    color: "rgba(0, 0, 0, 0.87)",
-    maxWidth: 220,
-    fontSize: theme.typography.pxToRem(12),
-    border: "1px solid #dadde9",
-    display: "block",
-  },
-}))(Tooltip);
 
-//People Picker Component
 export const PeoplePicker: FC<PeoplePickerProps> = ({
-  pPrincipalAccountType = "User,DL,SecGroup,SPGroup",
-  pSearchPrincipalSource = 15,
-  pResolvePrincipalSource = 15,
-  pAllowMultipleValues = false,
-  pMaximumEntitySuggestions = 50,
-  pWidth = "300px",
-  pDivId = "",
-  pLabel = "",
-  pGetUserInfo,
-  ptestPerson,
-  gridSize = 12,
-  toolTip,
+  label,
+  name,
+  setFieldValue,
+  fieldProps,
+  variant = "outlined",
+  placeholder = "",
+  currentItem = "",
 }) => {
-  const [peoplePickerValues] = usePeoplePickerFunctionality(pDivId);
+  let formType = useContext(FormTypeContext);
+
+  useEffect(() => {
+    console.log("formType :>> ", formType);
+    let userFieldLessID = name.replace("Id", "");
+    console.log("userFieldLessID :>> ", userFieldLessID);
+    // console.log("currentItem :>> ", currentItem[name.replace("Id", "")]);
+    console.log("name :>> ", name);
+    setFieldValue(name, currentItem, false);
+    reset();
+  }, []);
+  const { onChange, searchResults, reset } = usePeoplePicker();
+  const changeHandler = (event: any, value: any, reason: any) => {
+    setFieldValue(name, value, false);
+    reset();
+  };
+  const getDefaultValue = () => {
+    console.log('[currentItem[name.replace("Id", "")]]', [currentItem[name.replace("Id", "")]]);
+    if (formType === "Edit") {
+      if (currentItem[name.replace("Id", "")] !== "") {
+        return [currentItem[name.replace("Id", "")]];
+      }
+    }
+    return undefined;
+  };
 
   return (
-    <Grid item xs={gridSize}>
-      <HtmlTooltip
-        title={
-          <React.Fragment>
-            <Typography color="inherit">Tip</Typography>
-            {toolTip}
-          </React.Fragment>
-        }
-      >
-        <InfoIcon />
-      </HtmlTooltip>
-      <div className="PeoplePicker">
-        <InputLabel children={pLabel} />
-        <div id={pDivId}></div>
-        {/* <Field id={pDivId} name={pDivId} as={"div"} /> */}
-      </div>
-    </Grid>
+    <Autocomplete
+      defaultValue={getDefaultValue()}
+      autoHighlight={true}
+      multiple
+      options={searchResults}
+      getOptionLabel={(option: any) => option.DisplayText}
+      onChange={changeHandler}
+      filterSelectedOptions
+      // renderTags={
+      //   formType === "Edit"
+      //     ? (value, getTagProps) =>
+      //         value.map((option, index) => (
+      //           <Chip variant="outlined" label={currentItem[name.replace("Id", "")]} size="small" {...getTagProps({ index })} />
+      //         ))
+      //     : undefined
+      // }
+      renderInput={(params) => <TextField {...params} onChange={onChange} variant="outlined" label={label} placeholder={placeholder} />}
+
+      // {...remainingProps}
+    />
   );
 };
 
-export default PeoplePicker;
+{
+  /* <TextField {...params} onChange={onChange} variant={variant} label={label} placeholder={placeholder} /> */
+}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { GetFormFields, GetFormSettings, UpdateListItem, getRender } from "Components";
 
-export const useFormData = () => {
+export const useFormData = (currentItem: any = "") => {
   const [formLayout, setFormLayout] = useState<any>([]);
   const [formType, setFormType] = useState("");
 
@@ -13,6 +13,7 @@ export const useFormData = () => {
     returnedSettings = await GetFormSettings("IntakeForm Config");
     renderProperties = await GetFormFields("Submitted Projects");
     console.log("renderProperties :>> ", renderProperties);
+    console.log("returnedSettings :>> ", returnedSettings);
     let layoutParse = JSON.parse(returnedSettings[0].JSON);
 
     // sort returnedSettings so it's in alphabetical order, this allows both the renderProperties and returnedSettings to be in the same order.
@@ -21,29 +22,52 @@ export const useFormData = () => {
       var textB = b.i.toUpperCase();
       return textA < textB ? -1 : textA > textB ? 1 : 0;
     });
+    let renderPropertiesObject: any = {};
+    for (let j = 0; j < renderProperties.length; j++) {
+      renderPropertiesObject[renderProperties[j].InternalName] = renderProperties[j];
+    }
 
     setFormLayout(() => {
       let newLayout = layoutParse.map((field: any, index: number) => {
-        return {
-          x: field.x,
-          y: field.y,
-          w: field.w,
-          h: 1,
-          i: field.i,
-          title: renderProperties[index].Title,
-          render: getRender(
-            renderProperties[index].Title,
-            renderProperties[index].FieldType,
-            renderProperties[index].Choices,
-            renderProperties[index].InternalName,
-            renderProperties[index].Description,
-            renderProperties[index].Required
-          ),
-          description: renderProperties[index].Description,
-          required: renderProperties[index].Required,
-          internalName: renderProperties[index].InternalName,
-          defaultValue: renderProperties[index].DefaultValue,
-        }; //title: any, fieldType: any, choices: any, gridSize?: any, internalName?: any, description?: any, required?: any
+        if (field.TypeDisplayName === "section") {
+          let layout: any = {};
+          layout = {
+            x: field.x,
+            y: field.y,
+            w: field.w,
+            h: 1,
+            i: field.i,
+            title: field.i,
+            render: getRender(field.i, field.TypeDisplayName),
+          };
+
+          return layout;
+        } else {
+          let layout: any = {};
+          layout = {
+            x: field.x,
+            y: field.y,
+            w: field.w,
+            h: 1,
+            i: field.i,
+            title: renderPropertiesObject[field.i].Title,
+            render: getRender(
+              renderPropertiesObject[field.i].Title,
+              renderPropertiesObject[field.i].FieldType,
+              renderPropertiesObject[field.i].Choices,
+              renderPropertiesObject[field.i].InternalName,
+              renderPropertiesObject[field.i].Description,
+              renderPropertiesObject[field.i].Required,
+              currentItem
+            ),
+            description: renderPropertiesObject[field.i].Description,
+            required: renderPropertiesObject[field.i].Required,
+            internalName: renderPropertiesObject[field.i].InternalName,
+            defaultValue: renderPropertiesObject[field.i].DefaultValue,
+          };
+
+          return layout;
+        }
       });
       return newLayout;
     });

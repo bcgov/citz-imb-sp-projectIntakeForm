@@ -1,6 +1,6 @@
 import axios from "axios";
 import { GetListMetadataType } from "Components";
-export const UpdateListItem = async (listName: string, itemId: number, FormLayout: any) => {
+export const UpdateListItem = async (listName: string, itemId: number, data: any) => {
   //@ts-ignore
   let _spPageContextInfo = window._spPageContextInfo;
   let APIurl = "";
@@ -12,12 +12,10 @@ export const UpdateListItem = async (listName: string, itemId: number, FormLayou
   }
   try {
     let __metadata: any = await GetListMetadataType(listName);
-    // console.log("__metadata :>> ", __metadata.data.d.results[0].__metadata.type);
-    //console.log("JSON.stringify(FormLayout) :>> ", JSON.stringify(FormLayout));
     return new Promise((resolve, reject) => {
-      // console.log("object :>> ", __metadata.data.d.results[0].__metadata.type);
       let URL = APIurl + "/_api/lists/getbytitle('" + listName + "')/getItemById(" + itemId + ")";
-      let data = { __metadata: { type: __metadata.data.d.results[0].__metadata.type }, JSON: JSON.stringify(FormLayout) };
+      //Append metadata type to data
+      data.__metadata = { type: __metadata.data.d.results[0].__metadata.type };
       let configAxios = {
         headers: {
           Accept: "application/json;odata=verbose",

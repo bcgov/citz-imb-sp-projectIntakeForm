@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
 
 import logo from "./logo.svg";
 import "./App.css";
@@ -14,16 +14,26 @@ export const DialogCloseContext = React.createContext<any>();
 
 // @ts-ignore
 export const CurrentItemContext = React.createContext<any>();
+//@ts-ignore
+export const ScoreContext = React.createContext<any>();
+
+const initialScore = 0;
+const reducer = (state: any, action: any) => {
+  console.log("action :>> ", action);
+  console.log("state :>> ", state);
+  //action variable is a string at this point so you need to convert it to a number using unary plus operator "+"
+  return state + action[0] - action[1];
+};
 
 export function App() {
+  const [score, dispatch] = useReducer(reducer, initialScore);
+  console.log("score :>> ", score);
   const GetPPScriptFiles: any = () => {
     const styleSheet = document.createElement("link");
     styleSheet.setAttribute("rel", "stylesheet");
     styleSheet.setAttribute("href", "https://fonts.googleapis.com/icon?family=Material+Icons");
     document.getElementsByTagName("head")[0].appendChild(styleSheet);
   };
-
-  const { handleFieldType } = useFormData();
 
   useEffect(() => {
     GetPPScriptFiles();
@@ -49,6 +59,7 @@ export function App() {
     setFormikProps(FormikPropsPassed);
   };
 
+  const { handleFieldType } = useFormData(currentItem);
   return (
     <div className="App">
       {formType === "Submitting" ? (
@@ -62,6 +73,7 @@ export function App() {
               options={{
                 sorting: true,
                 exportButton: true,
+                pageSize: 15,
               }}
               actions={[
                 {
@@ -85,6 +97,7 @@ export function App() {
                     handleDialogOpen();
                     handleFormType("Edit");
                     setCurrentItem(rowData);
+                    console.log("rowData :>> ", rowData);
                   },
                 }),
                 (rowData: any) => ({
@@ -98,11 +111,13 @@ export function App() {
                 }),
               ]}
             />{" "}
-            <CurrentItemContext.Provider value={currentItem}>
-              <DialogCloseContext.Provider value={handleDialogClose}>
-                <FormDialog dialogStatus={dialogStatus} />
-              </DialogCloseContext.Provider>
-            </CurrentItemContext.Provider>
+            <ScoreContext.Provider value={{ scoreState: score, scoreDispatch: dispatch }}>
+              <CurrentItemContext.Provider value={currentItem}>
+                <DialogCloseContext.Provider value={handleDialogClose}>
+                  <FormDialog dialogStatus={dialogStatus} />
+                </DialogCloseContext.Provider>
+              </CurrentItemContext.Provider>
+            </ScoreContext.Provider>
             {/* </DialogStatusContext.Provider> */}
             {/* Remove when done testing only!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <FormDialog dialogStatus={true} /> */}
           </FormTypeContext.Provider>

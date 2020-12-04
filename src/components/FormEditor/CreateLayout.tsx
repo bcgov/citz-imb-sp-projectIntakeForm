@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { PeoplePickerFormEditor, AddFieldForm, GetFormFields, GetFormSettings } from "Components";
-import { getRender } from "./getRender";
+import { getRender } from "../Form/Reusable/getRender";
 
 // interface CreateLayoutProps {
 //   handleFieldsCallback?: any;

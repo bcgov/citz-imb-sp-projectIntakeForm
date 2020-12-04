@@ -156,8 +156,10 @@ export function GetFormFields(listName: string) {
                     let ChoicesArray = [];
                     for (let j = 0; j < listColumns.data.d.results[i].Choices.results.length; j++) {
                       ChoicesArray.push({
-                        label: listColumns.data.d.results[i].Choices.results[j],
+                        label: listColumns.data.d.results[i].Choices.results[j].split("-")[0],
                         value: listColumns.data.d.results[i].Choices.results[j],
+                        //Convert score into a number as your pulling a number out of a string
+                        score: Number(listColumns.data.d.results[i].Choices.results[j].split("-")[1]),
                       });
                     }
                     return ChoicesArray;

@@ -15,6 +15,7 @@ interface DatePickerProps {
   name: string;
   required?: boolean;
   toolTip?: string;
+  editValue?: any;
 }
 
 const HtmlTooltip = withStyles((theme: Theme) => ({
@@ -28,7 +29,7 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
   },
 }))(Tooltip);
 
-export const DateTimePicker: FC<DatePickerProps> = ({ label, name, required, toolTip }) => {
+export const DateTimePicker: FC<DatePickerProps> = ({ label, name, required, toolTip, editValue = null }) => {
   return (
     <>
       <HtmlTooltip
@@ -43,6 +44,7 @@ export const DateTimePicker: FC<DatePickerProps> = ({ label, name, required, too
       </HtmlTooltip>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Field
+          value={editValue}
           clearable
           component={DatePicker}
           name={name}

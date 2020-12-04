@@ -74,7 +74,7 @@ export const AddFieldForm: React.FC<AddFieldFormProps> = ({ handleAddField }) =>
               <DropDown
                 label={"Field Type"}
                 name={"fieldType"}
-                items={[
+                choices={[
                   { value: "Choice" },
                   { value: "Person or Group" },
                   { value: "Single Line of Text" },
