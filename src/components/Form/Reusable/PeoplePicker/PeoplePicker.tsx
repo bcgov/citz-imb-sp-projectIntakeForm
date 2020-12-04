@@ -57,14 +57,16 @@ export const PeoplePicker: FC<PeoplePickerProps> = ({
       getOptionLabel={(option: any) => option.DisplayText}
       onChange={changeHandler}
       filterSelectedOptions
-      // renderTags={
-      //   formType === "Edit"
-      //     ? (value, getTagProps) =>
-      //         value.map((option, index) => (
-      //           <Chip variant="outlined" label={currentItem[name.replace("Id", "")]} size="small" {...getTagProps({ index })} />
-      //         ))
-      //     : undefined
-      // }
+      renderTags={
+        formType === "Edit"
+          ? (value, getTagProps) => {
+              console.log("value :>> ", value);
+              return value.map((option, index) => (
+                <Chip variant="outlined" label={typeof option === "object" ? option.DisplayText : option} size="small" {...getTagProps({ index })} />
+              ));
+            }
+          : undefined
+      }
       renderInput={(params) => <TextField {...params} onChange={onChange} variant="outlined" label={label} placeholder={placeholder} />}
 
       // {...remainingProps}
