@@ -25,12 +25,12 @@ export const PeoplePicker: FC<PeoplePickerProps> = ({
   let formType = useContext(FormTypeContext);
 
   useEffect(() => {
-    console.log("formType :>> ", formType);
+    // console.log("formType :>> ", formType);
     let userFieldLessID = name.replace("Id", "");
-    console.log("userFieldLessID :>> ", userFieldLessID);
+    // console.log("userFieldLessID :>> ", userFieldLessID);
     // console.log("currentItem :>> ", currentItem[name.replace("Id", "")]);
-    console.log("name :>> ", name);
-    setFieldValue(name, currentItem, false);
+    // console.log("name :>> ", name);
+    setFieldValue(name, currentItem.name, false);
     reset();
   }, []);
   const { onChange, searchResults, reset } = usePeoplePicker();
@@ -39,7 +39,7 @@ export const PeoplePicker: FC<PeoplePickerProps> = ({
     reset();
   };
   const getDefaultValue = () => {
-    console.log('[currentItem[name.replace("Id", "")]]', [currentItem[name.replace("Id", "")]]);
+    // console.log('[currentItem[name.replace("Id", "")]]', [currentItem[name.replace("Id", "")]]);
     if (formType === "Edit") {
       if (currentItem[name.replace("Id", "")] !== "") {
         return [currentItem[name.replace("Id", "")]];
@@ -60,7 +60,7 @@ export const PeoplePicker: FC<PeoplePickerProps> = ({
       renderTags={
         formType === "Edit"
           ? (value, getTagProps) => {
-              console.log("value :>> ", value);
+              // console.log("value :>> ", value);
               return value.map((option, index) => (
                 <Chip variant="outlined" label={typeof option === "object" ? option.DisplayText : option} size="small" {...getTagProps({ index })} />
               ));

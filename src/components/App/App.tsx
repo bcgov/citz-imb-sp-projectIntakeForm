@@ -17,15 +17,22 @@ export const CurrentItemContext = React.createContext<any>();
 //@ts-ignore
 export const ScoreContext = React.createContext<any>();
 
-const initialScore = 0;
-const reducer = (state: any, action: any) => {
-  console.log("action :>> ", action);
-  console.log("state :>> ", state);
+const reducer = (state: any, score: any, initialScore: any) => {
+  if (initialScore) {
+    return initialScore;
+    console.log("action :>> ", score);
+    console.log("state :>> ", state);
+  } else {
+    return state + score[0] - score[1];
+    console.log("action :>> ", score);
+    console.log("state :>> ", state);
+  }
+
   //action variable is a string at this point so you need to convert it to a number using unary plus operator "+"
-  return state + action[0] - action[1];
 };
 
 export function App() {
+  const [initialScore, setInitialScore] = useState(0);
   const [score, dispatch] = useReducer(reducer, initialScore);
   console.log("score :>> ", score);
   const GetPPScriptFiles: any = () => {
@@ -94,6 +101,7 @@ export function App() {
                   icon: "edit",
                   tooltip: "Edit Project",
                   onClick: (event: any, rowData: any) => {
+                    setInitialScore(rowData.ProjectScore_x002d_hidden);
                     handleDialogOpen();
                     handleFormType("Edit");
                     setCurrentItem(rowData);

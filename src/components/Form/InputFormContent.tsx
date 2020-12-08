@@ -3,7 +3,16 @@ import { Formik, Form, Field } from "formik";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { useFormData, HandleAttachments, CreateListItem, DialogCloseContext, ProgressIndicator, FormTypeContext, UpdateListItem } from "Components";
+import {
+  useFormData,
+  HandleAttachments,
+  CreateListItem,
+  DialogCloseContext,
+  ProgressIndicator,
+  FormTypeContext,
+  UpdateListItem,
+  ScoreContext,
+} from "Components";
 import * as Yup from "yup";
 
 interface InputFormContentProps {
@@ -11,6 +20,9 @@ interface InputFormContentProps {
 }
 
 export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => {
+  const scoreContext: any = useContext(ScoreContext);
+  console.log("scoreContext :>> ", scoreContext.scoreState);
+
   let formType = useContext(FormTypeContext);
 
   const [filesToUpload, setFilesToUpload] = useState<any>([]);
@@ -18,7 +30,7 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
   const [validationSchema, setValidationSchema] = useState(Yup.object().shape({}));
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleDialogClose = useContext(DialogCloseContext);
+  const handleDialogClose: any = useContext(DialogCloseContext);
   const { formLayout } = useFormData(currentItem);
 
   useEffect(() => {
@@ -101,14 +113,15 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
     if (formType === "New") {
       // //!add back after testing Date of note: 12-03-2020
       try {
-        const CreateListItemResponse = await CreateListItem(formValues, "Submitted Projects");
+        const CreateListItemResponse = await CreateListItem(formValues, "Submitted Projects", scoreContext.scoreState);
         // const HandleAttachmentRepsonse = await HandleAttachments("Submitted Projects", CreateListItemResponse, filesToUpload);
       } catch (error) {
         console.log(error);
       }
     } else {
       try {
-        // const UpdateListItemResponse = await UpdateListItem("Submitted Projects", formValues.ID, formValues);
+        const UpdateListItemResponse = await UpdateListItem("Submitted Projects", formValues.ID, formValues, initialValues, scoreContext.scoreState);
+
         // const HandleAttachmentRepsonse = await HandleAttachments("Submitted Projects", UpdateListItemResponse, filesToUpload);
       } catch (error) {
         console.log(error);

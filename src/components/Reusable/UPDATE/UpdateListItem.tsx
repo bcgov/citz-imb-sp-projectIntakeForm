@@ -1,6 +1,25 @@
 import axios from "axios";
-import { GetListMetadataType } from "Components";
-export const UpdateListItem = async (listName: string, itemId: number, data: any) => {
+import { GetListMetadataType, GetUserId } from "Components";
+export const UpdateListItem = async (listName: string, itemId: number, formValues: any, initialValues: any, score: any) => {
+  const getUserID = async (valueKey: any) => {
+    let userID: any = await GetUserId(valueKey);
+    console.log("userID", userID);
+    return userID.data.d.Id;
+  };
+
+  //  set score for item
+  formValues["ProjectScore_x002d_hidden"] = score;
+
+  for (var key in formValues) {
+    if (initialValues[key] === formValues[key]) {
+      delete formValues[key];
+    } else {
+      formValues[key] = formValues[key][0].EntityData.SPUserID;
+    }
+  }
+
+  console.log("formValuesUpdateItem :>> ", formValues);
+
   //@ts-ignore
   let _spPageContextInfo = window._spPageContextInfo;
   let APIurl = "";
@@ -15,7 +34,7 @@ export const UpdateListItem = async (listName: string, itemId: number, data: any
     return new Promise((resolve, reject) => {
       let URL = APIurl + "/_api/lists/getbytitle('" + listName + "')/getItemById(" + itemId + ")";
       //Append metadata type to data
-      data.__metadata = { type: __metadata.data.d.results[0].__metadata.type };
+      formValues.__metadata = { type: __metadata.data.d.results[0].__metadata.type };
       let configAxios = {
         headers: {
           Accept: "application/json;odata=verbose",
@@ -27,7 +46,7 @@ export const UpdateListItem = async (listName: string, itemId: number, data: any
         },
       };
       axios
-        .post(URL, data, configAxios)
+        .post(URL, formValues, configAxios)
         .then(function (req) {
           resolve();
         })

@@ -87,7 +87,7 @@ export const useFormData = (currentItem: any = "") => {
         i: fieldTitle,
       });
     });
-    UpdateListItem("IntakeForm Config", 1, formLayout);
+    // UpdateListItem("IntakeForm Config", 1, formLayout);
   };
 
   useEffect(() => {
