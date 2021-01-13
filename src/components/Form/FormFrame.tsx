@@ -14,7 +14,7 @@ export function FormFrame() {
 
   let formType = useContext(FormTypeContext);
   let formikProps: any = useContext(FormikPropsContext);
-  let currentItem = useContext(CurrentItemContext);
+  let currentItem: any = useContext(CurrentItemContext);
 
   return (
     <>
@@ -22,9 +22,9 @@ export function FormFrame() {
         {formType === "New" ? (
           <InputFormContent />
         ) : formType === "Edit" ? (
-          <InputFormContent currentItem={currentItem} />
+          <InputFormContent currentItem={currentItem.currentItemValue} />
         ) : formType === "View" ? (
-          <ViewFormContent currentItem={currentItem} />
+          <ViewFormContent currentItem={currentItem.currentItemValue} />
         ) : (
           ""
         )}

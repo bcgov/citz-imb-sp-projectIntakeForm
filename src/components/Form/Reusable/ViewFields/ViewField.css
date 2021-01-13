@@ -1,5 +1,8 @@
-p.MuiTypography-root.MuiTypography-body1 {
-    background: #d3e6ee;
-    padding-left: 8px;
-    border-radius: 8px;
+.viewField {
+    padding: .565rem .75rem;
+    background: #eee!important;
+    border-radius: 3px!important;
+    margin-bottom: 1.8rem;
+    min-height: 24px;
+    cursor: not-allowed;
 }

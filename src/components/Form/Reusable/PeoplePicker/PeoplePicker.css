@@ -1,0 +1,17 @@
+.MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"] .MuiAutocomplete-input {
+    padding: 0px!important;
+}
+
+.MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"] {
+    padding: 3px!important;
+}
+
+.MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"] .MuiAutocomplete-endAdornment {
+    right: -6px!important;
+    top: 5px!important;
+}
+
+.MuiIconButton-root {
+    padding: 12px!important;
+    font-size: 0px!important;
+}

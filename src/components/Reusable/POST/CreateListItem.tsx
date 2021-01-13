@@ -8,7 +8,6 @@ export const CreateListItem = async (formValues: any, listName: any, score: any)
 
   const getUserID = async (valueKey: any) => {
     let userID: any = await GetUserId(valueKey);
-    console.log("userID", userID);
     return userID.data.d.Id;
   };
 

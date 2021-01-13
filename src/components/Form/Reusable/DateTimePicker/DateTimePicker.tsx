@@ -9,6 +9,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import { DatePicker } from "formik-material-ui-pickers";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import Grid from "@material-ui/core/Grid";
+import { CustomToolTip } from "Components";
 
 interface DatePickerProps {
   label: string;
@@ -32,31 +33,19 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
 export const DateTimePicker: FC<DatePickerProps> = ({ label, name, required, toolTip, editValue = null }) => {
   return (
     <>
-      <HtmlTooltip
-        title={
-          <React.Fragment>
-            <Typography color="inherit">Tip</Typography>
-            {toolTip}
-          </React.Fragment>
-        }
-      >
-        <InfoIcon />
-      </HtmlTooltip>
+      <CustomToolTip toolTip={toolTip} />
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Field
-          value={editValue}
           clearable
           component={DatePicker}
           name={name}
-          fullWidth={true}
           variant="dialog"
+          inputVariant="outlined"
           placeholder="MM/DD/YYYY"
           format={"MM/dd/yyyy"}
-          // value={selectedStartDate}
-          // onChange={handleStartDateChange}
+          fullWidth={true}
           autoOk={true}
           label={label}
-          required={required}
         />
       </MuiPickersUtilsProvider>
     </>

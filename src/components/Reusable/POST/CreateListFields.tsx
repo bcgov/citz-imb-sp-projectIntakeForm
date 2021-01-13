@@ -1,7 +1,6 @@
 import axios from "axios";
 
 export const CreateListFields = (columnType: any, listName: any, columnTitle: any, choices: any = "") => {
-  console.log("choices :>> ", choices);
   //@ts-ignore
   let _spPageContextInfo = window._spPageContextInfo;
   let APIurl = "";

@@ -9,7 +9,7 @@ interface SectionProps {
 
 export const Section: FC<SectionProps> = ({ title }) => {
   return (
-    <AppBar position="static">
+    <AppBar style={{ background: "#036" }} position="static">
       <Toolbar>
         <Typography variant="h6">{title}</Typography>
       </Toolbar>

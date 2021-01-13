@@ -13,9 +13,7 @@ export const useCurrentItem = () => {
 
   useEffect(() => {
     if (currentItem === undefined) {
-      console.log("currentItem :>> ", undefined);
     } else {
-      console.log("currentItem :>> ", currentItem);
     }
   }, [currentItem]);
 

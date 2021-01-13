@@ -4,37 +4,39 @@ import logo from "./logo.svg";
 import "./App.css";
 import { Table, useDialogToggle, FormDialog, ProgressIndicator, useFormData, useCurrentItem } from "Components";
 import { useState } from "react";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
 export const FormTypeContext = React.createContext("");
 // @ts-ignore
 export const FormikPropsContext = React.createContext<any>();
 
 export const DialogStatusContext = React.createContext("");
 // @ts-ignore
-export const DialogCloseContext = React.createContext<any>();
+export const DialogToggleContext = React.createContext<any>();
 
 // @ts-ignore
 export const CurrentItemContext = React.createContext<any>();
 //@ts-ignore
 export const ScoreContext = React.createContext<any>();
+//@ts-ignore
+export const RefreshDataContext = React.createContext<any>();
+//@ts-ignore
+export const HandleFormTypeContext = React.createContext<any>();
 
-const reducer = (state: any, score: any, initialScore: any) => {
-  if (initialScore) {
-    return initialScore;
-    console.log("action :>> ", score);
-    console.log("state :>> ", state);
-  } else {
-    return state + score[0] - score[1];
-    console.log("action :>> ", score);
-    console.log("state :>> ", state);
+const reducer = (state: any, score: any) => {
+  switch (score.trigger) {
+    case "initial":
+      return score.initialValue;
+    default:
+      return state + score.currentItemScore - score.previousItemScore;
   }
 
   //action variable is a string at this point so you need to convert it to a number using unary plus operator "+"
 };
 
 export function App() {
-  const [initialScore, setInitialScore] = useState(0);
+  const initialScore = 0;
   const [score, dispatch] = useReducer(reducer, initialScore);
-  console.log("score :>> ", score);
+  const [refresh, setRefresh] = useState(false);
   const GetPPScriptFiles: any = () => {
     const styleSheet = document.createElement("link");
     styleSheet.setAttribute("rel", "stylesheet");
@@ -57,7 +59,6 @@ export function App() {
   });
 
   const handleFormType = (formTypePassed: string) => {
-    console.log("formType :>> ", formTypePassed);
     setFormType(formTypePassed); //!change to hook that handles the field type
     handleFieldType(formTypePassed); //!change to hook that handles the field type
   };
@@ -66,70 +67,73 @@ export function App() {
     setFormikProps(FormikPropsPassed);
   };
 
+  const handleRefresh = () => {
+    setRefresh(!refresh);
+  };
+
   const { handleFieldType } = useFormData(currentItem);
   return (
     <div className="App">
       {formType === "Submitting" ? (
         <ProgressIndicator />
       ) : (
-        <FormikPropsContext.Provider value={formikProps}>
-          <FormTypeContext.Provider value={formType}>
-            {/* <DialogStatusContext.Provider value={dialogStatus}> */}
-            <Table
-              listName={"Submitted Projects"}
-              options={{
-                sorting: true,
-                exportButton: true,
-                pageSize: 15,
-              }}
-              actions={[
-                {
-                  icon: "add",
-                  tooltip: "Add Project",
-                  isFreeAction: true, //Allows you to add the button on it's own in the top right
-                  onClick: () => {
-                    handleDialogOpen();
-                    handleFormType("New");
-                    handleFormikProps({
-                      initialValues: { projectName: "", projectID: "", objective: "", projectOwner: "" },
-                      onSubmit: "",
-                      validationSchema: "",
-                    });
-                  },
-                },
-                (rowData: any) => ({
-                  icon: "edit",
-                  tooltip: "Edit Project",
-                  onClick: (event: any, rowData: any) => {
-                    setInitialScore(rowData.ProjectScore_x002d_hidden);
-                    handleDialogOpen();
-                    handleFormType("Edit");
-                    setCurrentItem(rowData);
-                    console.log("rowData :>> ", rowData);
-                  },
-                }),
-                (rowData: any) => ({
-                  icon: "list_alt",
-                  tooltip: "More Details",
-                  onClick: (event: any, rowData: any) => {
-                    handleDialogOpen();
-                    handleFormType("View");
-                    setCurrentItem(rowData);
-                  },
-                }),
-              ]}
-            />{" "}
-            <ScoreContext.Provider value={{ scoreState: score, scoreDispatch: dispatch }}>
-              <CurrentItemContext.Provider value={currentItem}>
-                <DialogCloseContext.Provider value={handleDialogClose}>
-                  <FormDialog dialogStatus={dialogStatus} />
-                </DialogCloseContext.Provider>
-              </CurrentItemContext.Provider>
-            </ScoreContext.Provider>
-            {/* </DialogStatusContext.Provider> */}
-            {/* Remove when done testing only!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <FormDialog dialogStatus={true} /> */}
-          </FormTypeContext.Provider>
-        </FormikPropsContext.Provider>
+        <RefreshDataContext.Provider value={{ handleRefresh: handleRefresh, refresh: refresh }}>
+          <FormikPropsContext.Provider value={formikProps}>
+            <FormTypeContext.Provider value={formType}>
+              <HandleFormTypeContext.Provider value={handleFormType}>
+                <ScoreContext.Provider value={{ scoreState: score, scoreDispatch: dispatch }}>
+                  <CurrentItemContext.Provider value={{ currentItemValue: currentItem, handleCurrentItem: setCurrentItem }}>
+                    <DialogToggleContext.Provider value={{ close: handleDialogClose, open: handleDialogOpen }}>
+                      {/* <DialogStatusContext.Provider value={dialogStatus}> */}
+                      <Table
+                        listName={"Submitted Projects"}
+                        options={{
+                          sorting: true,
+                          exportButton: { csv: true, pdf: false },
+                          pageSize: 15,
+                          headerStyle: {
+                            backgroundColor: "#212756",
+                            color: "#FFF",
+                          },
+                        }}
+                        actions={[
+                          {
+                            icon: () => <AddCircleIcon style={{ fill: "rgb(0 128 0 / 62%)", fontSize: "31px" }} />,
+                            tooltip: "Add Project",
+                            isFreeAction: true, //Allows you to add the button on it's own in the top right
+                            onClick: () => {
+                              handleDialogOpen();
+                              handleFormType("New");
+                              handleFormikProps({
+                                initialValues: { projectName: "", projectID: "", objective: "", projectOwner: "" },
+                                onSubmit: "",
+                                validationSchema: "",
+                              });
+                            },
+                          },
+                          (rowData: any) => ({
+                            icon: "edit",
+                            tooltip: "Edit Project",
+                            onClick: (event: any, rowData: any) => {
+                              dispatch({ trigger: "initial", initialValue: rowData.ProjectScore_x002d_hidden });
+                              handleDialogOpen();
+                              handleFormType("Edit");
+                              setCurrentItem(rowData);
+                              console.log("rowData :>> ", rowData);
+                            },
+                          }),
+                        ]}
+                      />{" "}
+                      <FormDialog dialogStatus={dialogStatus} />
+                    </DialogToggleContext.Provider>
+                  </CurrentItemContext.Provider>
+                </ScoreContext.Provider>
+              </HandleFormTypeContext.Provider>
+              {/* </DialogStatusContext.Provider> */}
+              {/* Remove when done testing only!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <FormDialog dialogStatus={true} /> */}
+            </FormTypeContext.Provider>
+          </FormikPropsContext.Provider>
+        </RefreshDataContext.Provider>
       )}
     </div>
   );

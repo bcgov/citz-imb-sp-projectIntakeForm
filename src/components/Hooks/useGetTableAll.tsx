@@ -13,7 +13,6 @@ export const useGetTableAll = (listName: any) => {
       listName,
       expand: "DefaultView,DefaultView/ViewFields,Fields,Items,Views,Views/ViewFields,Forms",
     });
-    console.log("returnedList :>> ", returnedList);
     const allTableColumnsViews: any = returnedList.Views.results.map((view: any) => {
       let tempViews: any = {};
       // tempViews["sortBy"] = view.DefaultView
@@ -48,10 +47,8 @@ export const useGetTableAll = (listName: any) => {
       return tempViews;
     });
     // add the sorting function to the veiw fields
-    console.log("allTableColumnsViews", allTableColumnsViews);
     setAllTableColumns(returnedList.Fields.results);
     setAllViewsColumns(allTableColumnsViews);
-    console.log("returnedList.Items.results :>> ", returnedList.Items.results);
     // setTableItems(returnedList.Items.results);
     return;
   };
@@ -87,7 +84,6 @@ export const useGetTableAll = (listName: any) => {
         userFieldNamesSelect.push(allTableColumns[i].StaticName);
       }
     }
-    console.log("allTableColumns :>> ", allTableColumns);
     //@ts-ignore
     for (let i = 0; i < allTableColumns.length; i++) {
       //@ts-ignore
@@ -121,12 +117,10 @@ export const useGetTableAll = (listName: any) => {
             }
           }
         }
-        console.log("itemsFormatted :>> ", itemsFormatted);
         itemsFormatted.push(itemFormatted);
       }
       return itemsFormatted;
     };
-    console.log("items2 :>> ", formattedItems());
     return formattedItems;
   };
 

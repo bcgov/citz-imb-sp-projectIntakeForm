@@ -50,7 +50,6 @@ export const AddFieldForm: React.FC<AddFieldFormProps> = ({ handleAddField }) =>
     try {
       await CreateListFields(formValues.fieldType, "Submitted Projects", fieldTitleCamelCase, choices);
     } catch (error) {
-      console.log(error);
     }
   };
 

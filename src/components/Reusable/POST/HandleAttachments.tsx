@@ -13,10 +13,8 @@ export const HandleAttachments = async (listName: any, listItem: any, filesToUpl
   for (let i = 0; i < filesToUpload.length; i++) {
     await fetch(
       APIurl +
-        "/_api/web/lists/getbytitle('" +
-        listName +
-        "')/items(" +
-        listItem.data.d.ID +
+        "/_api/web/lists/getbytitle('Submitted Projects')/items(" +
+        listItem.Id +
         ")/AttachmentFiles/add(FileName='" +
         filesToUpload[i].name +
         "')",

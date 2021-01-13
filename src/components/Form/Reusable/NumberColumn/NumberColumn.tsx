@@ -6,6 +6,7 @@ import InfoIcon from "@material-ui/icons/Info";
 import { Field, ErrorMessage } from "formik";
 //@ts-ignore
 import CurrencyTextField from "@unicef/material-ui-currency-textfield";
+import { CustomToolTip } from "Components";
 
 interface NumberColumnProps {
   label: string;
@@ -28,16 +29,7 @@ export const NumberColumn: FC<NumberColumnProps> = ({ label, name, toolTip, type
   }))(Tooltip);
   return (
     <div>
-      <HtmlTooltip
-        title={
-          <React.Fragment>
-            <Typography color="inherit">Tip</Typography>
-            {toolTip}
-          </React.Fragment>
-        }
-      >
-        <InfoIcon />
-      </HtmlTooltip>
+      <CustomToolTip toolTip={toolTip} />
 
       <Field name={name} required={required}>
         {(fieldProps: any) => {
@@ -46,11 +38,13 @@ export const NumberColumn: FC<NumberColumnProps> = ({ label, name, toolTip, type
           };
           return (
             <CurrencyTextField
+              inputVariant="outlined"
               name={name}
               label={label}
-              variant="standard"
+              variant="outlined"
               value={fieldProps.field.value}
               currencySymbol="$"
+              fullWidth={true}
               outputFormat="string"
               onChange={changeHandler}
             />

@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useContext, useState } from "react";
+import React, { FC, ReactNode, useContext, useState, useEffect } from "react";
 import { Field, ErrorMessage, FieldInputProps } from "formik";
 import Grid from "@material-ui/core/Grid";
 import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
@@ -10,7 +10,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { ScoreContext } from "Components";
+import { ScoreContext, CustomToolTip } from "Components";
+import "../DropDown/DropDown.css";
 
 interface DropDownItem extends FieldInputProps<string> {
   label: string;
@@ -67,25 +68,33 @@ const MaterialUISelectField: React.FC<MaterialUISelectFieldProps> = ({
   setFieldName,
   editValue,
 }) => {
-  const [previousComponentScore, setPreviousComponentScore] = useState(0);
+  const [previousComponentScore, setPreviousComponentScore] = useState<any>(0);
   const scoreContext: any = useContext(ScoreContext);
+
+  useEffect(() => {
+    setPreviousComponentScore(() => {
+      if (isNaN(parseInt(value?.split("-")[1]))) {
+        return 0;
+      } else {
+        return parseInt(value?.split("-")[1]);
+      }
+    });
+    return;
+  }, []);
   return (
-    <FormControl fullWidth={true} required={required}>
+    <FormControl variant="outlined" fullWidth={true} required={required}>
       <InputLabel>{label}</InputLabel>
       <Select
         name={name}
         onChange={(event: any) => {
-          console.log('event._targetInst.memoizedProps["data-score"] :>> ', event._targetInst.memoizedProps["data-score"]);
           //The reason for "formattedComponentScore" is because not all choices will have a score value and they will return NaN if they don't have a score.  The apps reducer function has not been adjusted to account for NaN so we need to convert NaN to 0.
           let formattedComponentScore: any;
           if (Number.isNaN(event._targetInst.memoizedProps["data-score"])) {
-            console.log("is not a number");
             formattedComponentScore = 0;
           } else {
-            console.log("is a number");
             formattedComponentScore = event._targetInst.memoizedProps["data-score"];
           }
-          scoreContext.scoreDispatch([formattedComponentScore, previousComponentScore]);
+          scoreContext.scoreDispatch({ currentItemScore: formattedComponentScore, previousItemScore: previousComponentScore });
           setPreviousComponentScore(formattedComponentScore);
           handleShowChoices(event.target.value);
           setFieldValue(setFieldName, "");
@@ -114,17 +123,10 @@ export const DropDown: FC<DropDownProps> = ({
   // console.log("dropDownValue :>> ", choices);
   return (
     <>
-      <HtmlTooltip
-        title={
-          <React.Fragment>
-            <Typography color="inherit">Tip</Typography>
-            {toolTip}
-          </React.Fragment>
-        }
-      >
-        <InfoIcon />
-      </HtmlTooltip>
+      <CustomToolTip toolTip={toolTip} />
+
       <Field
+        variant={"outlined"}
         handleShowChoices={handleShowChoices}
         setFieldValue={setFieldValue}
         name={name}

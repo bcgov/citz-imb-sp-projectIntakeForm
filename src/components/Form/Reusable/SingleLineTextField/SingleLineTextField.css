@@ -1,3 +1,7 @@
 .MuiFormHelperText-root {
     color: Red!important
 }
+
+input.MuiInputBase-input.MuiOutlinedInput-input {
+    min-height: 40px;
+}

@@ -6,6 +6,7 @@ import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
 import { withStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import InfoIcon from "@material-ui/icons/Info";
+import { CustomToolTip } from "Components";
 
 interface SingleLineTextFieldProps {
   label: string;
@@ -29,16 +30,8 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
 export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name, type = "text", required, toolTip }) => {
   return (
     <>
-      <HtmlTooltip
-        title={
-          <React.Fragment>
-            <Typography color="inherit">Tip</Typography>
-            {toolTip}
-          </React.Fragment>
-        }
-      >
-        <InfoIcon />
-      </HtmlTooltip>
+      <CustomToolTip toolTip={toolTip} />
+
       <Field
         required={required}
         as={TextField}
@@ -46,6 +39,7 @@ export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name,
         label={label}
         fullWidth={true}
         type={type}
+        variant={"outlined"}
         name={name}
         helperText={<ErrorMessage name={name} />}
       />

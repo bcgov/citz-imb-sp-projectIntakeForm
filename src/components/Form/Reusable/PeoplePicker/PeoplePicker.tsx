@@ -2,7 +2,7 @@ import React, { useState, useEffect, FC, useContext } from "react";
 import { usePeoplePicker, FormTypeContext } from "Components";
 import { TextField, Chip } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
-
+import "../PeoplePicker/PeoplePicker.css";
 interface PeoplePickerProps {
   label: any;
   name: any;

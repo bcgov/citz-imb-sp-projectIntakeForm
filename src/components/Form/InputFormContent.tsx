@@ -3,15 +3,19 @@ import { Formik, Form, Field } from "formik";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Dropzone from "react-dropzone-uploader";
+import Paper from "@material-ui/core/Paper";
 import {
   useFormData,
   HandleAttachments,
   CreateListItem,
-  DialogCloseContext,
+  DialogToggleContext,
   ProgressIndicator,
   FormTypeContext,
   UpdateListItem,
   ScoreContext,
+  AttachmentViewer,
+  RefreshDataContext,
 } from "Components";
 import * as Yup from "yup";
 
@@ -21,7 +25,7 @@ interface InputFormContentProps {
 
 export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => {
   const scoreContext: any = useContext(ScoreContext);
-  console.log("scoreContext :>> ", scoreContext.scoreState);
+  const refreshDataContext: any = useContext(RefreshDataContext);
 
   let formType = useContext(FormTypeContext);
 
@@ -30,14 +34,13 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
   const [validationSchema, setValidationSchema] = useState(Yup.object().shape({}));
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleDialogClose: any = useContext(DialogCloseContext);
+  const dialogToggleContext: any = useContext(DialogToggleContext);
   const { formLayout } = useFormData(currentItem);
 
   useEffect(() => {
     setValidationSchema(() => {
       let tempSchema: any = {};
       formLayout.map((field: any) => {
-        console.log("formLayout :>> ", formLayout);
         if (field.Required) tempSchema[field.InternalName] = Yup.string().required(field.InternalName + " is required");
       });
       let schema = Yup.object().shape(tempSchema);
@@ -47,8 +50,6 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
 
   useEffect(() => {
     setIntitialValues(() => {
-      console.log("currentItem :>> ", currentItem);
-      console.log("formLayout :>> ", formLayout);
       if (currentItem) {
         let initialValues: any = { ID: currentItem.ID };
         Object.keys(currentItem).forEach((currentItemKey) => {
@@ -58,13 +59,7 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
             }
           });
         });
-        // let tempFormattedValues: any = {};
-        // Object.keys(currentItem).forEach((currentItemKey) => {
-        //   console.log("currentItem :>> ", currentItem);
-        //   console.log("currentItemKey :>> ", currentItemKey);
-        //   console.log("currentItem[currentItemKey] :>> ", currentItem[currentItemKey]);
-        // tempFormattedValues.currentItemKey = currentItem[currentItemKey].split("-")[0];
-        // });
+
         return Object.keys(initialValues).length > 1 ? initialValues : undefined;
       } else {
         let initialValues: any = {};
@@ -77,9 +72,7 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
   }, [formLayout]);
 
   useEffect(() => {
-    console.log("initialValues.Title :>> ", initialValues?.Title);
     if (initialValues) {
-      console.log("initialValues :>> ", initialValues);
       setIsLoading(false);
     }
   }, [initialValues]);
@@ -113,25 +106,61 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
     if (formType === "New") {
       // //!add back after testing Date of note: 12-03-2020
       try {
-        const CreateListItemResponse = await CreateListItem(formValues, "Submitted Projects", scoreContext.scoreState);
-        // const HandleAttachmentRepsonse = await HandleAttachments("Submitted Projects", CreateListItemResponse, filesToUpload);
-      } catch (error) {
-        console.log(error);
-      }
+        const CreateListItemResponse: any = await CreateListItem(formValues, "Submitted Projects", scoreContext.scoreState);
+        if (filesToUpload.length > 0) {
+          await HandleAttachments("Submitted Projects", CreateListItemResponse.d.ID, filesToUpload);
+        }
+      } catch (error) {}
     } else {
       try {
         const UpdateListItemResponse = await UpdateListItem("Submitted Projects", formValues.ID, formValues, initialValues, scoreContext.scoreState);
 
-        // const HandleAttachmentRepsonse = await HandleAttachments("Submitted Projects", UpdateListItemResponse, filesToUpload);
-      } catch (error) {
-        console.log(error);
-      }
+        if (filesToUpload.length > 0) {
+          await HandleAttachments("Submitted Projects", currentItem, filesToUpload);
+        }
+      } catch (error) {}
     }
-    console.log("formValues :>> ", formValues);
-    // @ts-ignore
-    handleDialogClose();
+
+    //@ts-ignore
+    dialogToggleContext.close();
     setSubmitting(false);
+    refreshDataContext.handleRefresh();
+    console.log("formValues :>> ", formValues);
   };
+
+  const handleChangeStatus = ({ meta, remove, file }: any, status: any) => {
+    if (status === "rejected_file_type") {
+      alert("file Type not accepted");
+    } else if (status === "rejected_max_files") {
+      alert("exceeded max number of files");
+    } else if (status === "error_file_size") {
+      alert("File exceeds maximum allowed file size");
+    } else if (status === "error_validation") {
+      alert("File validation failed");
+    } else if (status === "upload timed out, lost connection to upload server") {
+      alert("exceeded max number of files");
+    } else if (status === "error_upload") {
+      alert("response has HTTP status code >= 400");
+    } else if (status === "done") {
+      setFilesToUpload((previousFiles: any) => {
+        let tempPreviousFiles = [...previousFiles];
+        let fileExists = false;
+
+        fileExists = previousFiles.find((file: any) => file.name === meta.name);
+
+        if (!fileExists) {
+          tempPreviousFiles.push(file);
+        } else {
+          remove();
+        }
+
+        return tempPreviousFiles;
+      });
+    }
+  };
+  useEffect(() => {
+    console.log("filesToUpload :>> ", filesToUpload);
+  }, [filesToUpload]);
   return (
     <>
       {isLoading ? (
@@ -148,6 +177,9 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
                 <>
                   <Grid container spacing={3}>
                     {generateDOM()}
+                    {formType === "Edit" ? <AttachmentViewer attachments={currentItem.AttachmentFiles.results} currentItemId={currentItem.Id} /> : ""}
+
+                    <Dropzone onChangeStatus={handleChangeStatus} />
                   </Grid>
                   <br />
                   <br />
@@ -158,12 +190,13 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
                     type="button"
                     onClick={() => {
                       // @ts-ignore
-                      handleDialogClose();
+                      dialogToggleContext.close();
+                      refreshDataContext.handleRefresh();
                     }}
                     variant="contained"
                     color="secondary"
                   >
-                    Cancel
+                    Close
                   </Button>
                 </>
               )}

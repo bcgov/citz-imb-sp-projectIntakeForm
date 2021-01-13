@@ -14,7 +14,9 @@ export const ViewField: FC<ViewFieldProps> = ({ label, name, toolTip, itemValue 
     <>
       <CustomToolTip toolTip={toolTip} />
       <Typography variant="h6">{label}</Typography>
-      <Typography variant="body1">{itemValue}</Typography>
+      <Typography className={"viewField"} variant="body1">
+        {itemValue}
+      </Typography>
     </>
   );
 };

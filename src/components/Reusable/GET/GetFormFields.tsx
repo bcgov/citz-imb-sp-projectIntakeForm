@@ -82,7 +82,7 @@ export function GetFormFields(listName: string) {
       //console.log("listColumns :>> ", listColumns);
       let formFields = [];
       for (let i = 0; i < listColumns.data.d.results.length; i++) {
-        if (listColumns.data.d.results[i].InternalName != "ContentType") {
+        if (listColumns.data.d.results[i].InternalName != "ContentType" && listColumns.data.d.results[i].InternalName !== "Attachments") {
           formFields.push({
             InternalName: listColumns.data.d.results[i].InternalName,
             FieldType:
@@ -122,8 +122,6 @@ export function GetFormFields(listName: string) {
                 ? "Calculated"
                 : listColumns.data.d.results[i].FieldTypeKind === 18
                 ? "File"
-                : listColumns.data.d.results[i].FieldTypeKind === 19
-                ? "Attachments"
                 : listColumns.data.d.results[i].FieldTypeKind === 20
                 ? "User"
                 : listColumns.data.d.results[i].FieldTypeKind === 21

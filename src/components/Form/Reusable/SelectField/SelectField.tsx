@@ -10,6 +10,7 @@ import { withStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import InfoIcon from "@material-ui/icons/Info";
 import Grid from "@material-ui/core/Grid";
+import { CustomToolTip } from "Components";
 
 interface SelectFieldProps {
   dropDownValue: any[];
@@ -50,16 +51,8 @@ const MaterialUISelectField: FC<MaterialUISelectFieldProps> = ({ errorString, la
 export const SelectField: FC<SelectFieldProps> = ({ dropDownValue, name, label, toolTip }) => {
   return (
     <>
-      <HtmlTooltip
-        title={
-          <React.Fragment>
-            <Typography color="inherit">Tip</Typography>
-            {toolTip}
-          </React.Fragment>
-        }
-      >
-        <InfoIcon />
-      </HtmlTooltip>
+      <CustomToolTip toolTip={toolTip} />
+
       <Field name={name} as={MaterialUISelectField} label={label} errorString={<ErrorMessage name={"name"} />}>
         {dropDownValue.map((dropDownValue: any) => (
           <MenuItem key={dropDownValue.ID} value={dropDownValue.Title}>

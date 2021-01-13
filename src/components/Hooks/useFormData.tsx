@@ -9,11 +9,8 @@ export const useFormData = (currentItem: any = "") => {
   let renderProperties: any;
 
   let getSettings = async () => {
-    console.log("test2 :>> ");
     returnedSettings = await GetFormSettings("IntakeForm Config");
     renderProperties = await GetFormFields("Submitted Projects");
-    console.log("renderProperties :>> ", renderProperties);
-    console.log("returnedSettings :>> ", returnedSettings);
     let layoutParse = JSON.parse(returnedSettings[0].JSON);
 
     // sort returnedSettings so it's in alphabetical order, this allows both the renderProperties and returnedSettings to be in the same order.
@@ -29,7 +26,7 @@ export const useFormData = (currentItem: any = "") => {
 
     setFormLayout(() => {
       let newLayout = layoutParse.map((field: any, index: number) => {
-        if (field.TypeDisplayName === "section") {
+        if (field.TypeDisplayName === "section" || field.TypeDisplayName === "sectionDescription") {
           let layout: any = {};
           layout = {
             x: field.x,
@@ -38,6 +35,7 @@ export const useFormData = (currentItem: any = "") => {
             h: 1,
             i: field.i,
             title: field.i,
+            fieldType: field.TypeDisplayName,
             render: getRender(field.i, field.TypeDisplayName),
           };
 
@@ -51,6 +49,7 @@ export const useFormData = (currentItem: any = "") => {
             h: 1,
             i: field.i,
             title: renderPropertiesObject[field.i].Title,
+            fieldType: field.TypeDisplayName,
             render: getRender(
               renderPropertiesObject[field.i].Title,
               renderPropertiesObject[field.i].FieldType,

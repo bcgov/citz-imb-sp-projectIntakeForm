@@ -3,6 +3,7 @@ import { withStyles, Theme } from "@material-ui/core/styles";
 import React, { FC } from "react";
 import Typography from "@material-ui/core/Typography";
 import InfoIcon from "@material-ui/icons/Info";
+import "./CustomToolTip.css";
 
 const HtmlTooltip = withStyles((theme: Theme) => ({
   tooltip: {
@@ -21,16 +22,22 @@ interface CustomToolTipProps {
 
 export const CustomToolTip: FC<CustomToolTipProps> = ({ toolTip }) => {
   return (
-    <HtmlTooltip
-      title={
-        <React.Fragment>
-          <Typography color="inherit">Tip</Typography>
-          {toolTip}
-        </React.Fragment>
-      }
-    >
-      <InfoIcon />
-    </HtmlTooltip>
+    <>
+      {toolTip ? (
+        <HtmlTooltip
+          title={
+            <React.Fragment>
+              <Typography color="inherit">Tip</Typography>
+              {toolTip}
+            </React.Fragment>
+          }
+        >
+          <InfoIcon />
+        </HtmlTooltip>
+      ) : (
+        <div className={"gapSpacer"}></div>
+      )}
+    </>
   );
 };
 

@@ -13,7 +13,7 @@ export const FormDialog: FC<FormDialogProps> = ({ dialogStatus }) => {
     <div>
       {/* @ts-ignore */}
       <Dialog fullScreen open={dialogStatus} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+        <DialogTitle id="form-dialog-title">Project Intake Form</DialogTitle>
         <DialogContent>
           <FormFrame />
         </DialogContent>

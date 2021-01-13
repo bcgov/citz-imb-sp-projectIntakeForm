@@ -5,7 +5,7 @@ import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
 import { withStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import InfoIcon from "@material-ui/icons/Info";
-import Grid from "@material-ui/core/Grid";
+import { CustomToolTip } from "Components";
 
 interface MultiLineTextFieldProps {
   label: string;
@@ -29,22 +29,15 @@ const HtmlTooltip = withStyles((theme: Theme) => ({
 export const MultiLineTextField: FC<MultiLineTextFieldProps> = ({ label, name, type = "text", required, toolTip }) => {
   return (
     <>
-      <HtmlTooltip
-        title={
-          <React.Fragment>
-            <Typography color="inherit">Tip</Typography>
-            {toolTip}
-          </React.Fragment>
-        }
-      >
-        <InfoIcon />
-      </HtmlTooltip>
+      <CustomToolTip toolTip={toolTip} />
+
       <Field
         id="outlined-multiline-static"
         required={required}
         as={TextField}
         autoComplete="off"
         label={label}
+        variant={"outlined"}
         fullWidth={true}
         multiline={true}
         rows="4"

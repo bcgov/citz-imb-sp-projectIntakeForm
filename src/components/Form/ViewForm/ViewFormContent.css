@@ -1,0 +1,9 @@
+.MuiDialogTitle-root {
+    flex: 0 0 auto;
+    margin: 0px;
+    padding: 16px 24px;
+    background: #212756;
+    margin-bottom: 29px!important;
+    color: white;
+    border-bottom: 2px solid #fcba19;
+}

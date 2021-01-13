@@ -35,7 +35,6 @@ export const CreateLayout = async () => {
     returnedFields[j].internalName = settings[formConfig[j].i].InternalName;
     returnedFields[j].render = getRender(returnedFields[j].Title, returnedFields[j].FieldType, returnedFields[j].Choices);
   }
-  console.log("returnedFields :>> ", returnedFields);
 
   // returnedFields.sort((a: any, b: any) => {
   //   // Use toUpperCase() to ignore character casing

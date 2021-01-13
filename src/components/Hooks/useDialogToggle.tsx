@@ -4,7 +4,6 @@ export function useDialogToggle() {
   const [dialogStatus, setDialogStatus] = useState<any>();
 
   const handleDialogClose: Function = () => {
-    console.log("test", dialogStatus);
     setDialogStatus(false);
   };
 

@@ -3,7 +3,6 @@ import { GetListMetadataType, GetUserId } from "Components";
 export const UpdateListItem = async (listName: string, itemId: number, formValues: any, initialValues: any, score: any) => {
   const getUserID = async (valueKey: any) => {
     let userID: any = await GetUserId(valueKey);
-    console.log("userID", userID);
     return userID.data.d.Id;
   };
 
@@ -13,12 +12,11 @@ export const UpdateListItem = async (listName: string, itemId: number, formValue
   for (var key in formValues) {
     if (initialValues[key] === formValues[key]) {
       delete formValues[key];
-    } else {
-      formValues[key] = formValues[key][0].EntityData.SPUserID;
+      //@ts-ignore
+    } else if (typeof formValues[key] === Object) {
+      formValues[key] = formValues[key][0]?.EntityData?.SPUserID;
     }
   }
-
-  console.log("formValuesUpdateItem :>> ", formValues);
 
   //@ts-ignore
   let _spPageContextInfo = window._spPageContextInfo;
