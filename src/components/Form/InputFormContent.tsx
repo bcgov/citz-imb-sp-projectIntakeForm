@@ -121,11 +121,11 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
       } catch (error) {}
     }
 
-    //@ts-ignore
-    dialogToggleContext.close();
-    setSubmitting(false);
-    refreshDataContext.handleRefresh();
-    console.log("formValues :>> ", formValues);
+    // //@ts-ignore
+    // dialogToggleContext.close();
+    // setSubmitting(false);
+    // refreshDataContext.handleRefresh();
+    // console.log("formValues :>> ", formValues);
   };
 
   const handleChangeStatus = ({ meta, remove, file }: any, status: any) => {

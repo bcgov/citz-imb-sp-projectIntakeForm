@@ -41,8 +41,11 @@ export const PeoplePicker: FC<PeoplePickerProps> = ({
   const getDefaultValue = () => {
     // console.log('[currentItem[name.replace("Id", "")]]', [currentItem[name.replace("Id", "")]]);
     if (formType === "Edit") {
+      console.log('currentItem :>> ', currentItem);
+      console.log('name:>> ', name);
+      console.log('currentItem[name.replace("Id", "")] :>> ', currentItem[name.replace("Id", "")]);
       if (currentItem[name.replace("Id", "")] !== "") {
-        return [currentItem[name.replace("Id", "")]];
+        return currentItem[name.replace("Id", "")];
       }
     }
     return undefined;
@@ -52,7 +55,7 @@ export const PeoplePicker: FC<PeoplePickerProps> = ({
     <Autocomplete
       defaultValue={getDefaultValue()}
       autoHighlight={true}
-      multiple
+      // multiple
       options={searchResults}
       getOptionLabel={(option: any) => option.DisplayText}
       onChange={changeHandler}
@@ -60,7 +63,7 @@ export const PeoplePicker: FC<PeoplePickerProps> = ({
       renderTags={
         formType === "Edit"
           ? (value, getTagProps) => {
-              // console.log("value :>> ", value);
+              console.log("value :>> ", value);
               return value.map((option, index) => (
                 <Chip variant="outlined" label={typeof option === "object" ? option.DisplayText : option} size="small" {...getTagProps({ index })} />
               ));
