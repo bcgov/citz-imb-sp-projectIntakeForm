@@ -1,7 +1,39 @@
-span.material-icons.MuiIcon-root {
-    background: #00b8ff38;
-    font-size: 20px;
-    color: black;
-    border-radius: 35px;
-    padding: 10px;
+
+/* column headers fixed width */
+/* .MTableHeader-header-15 {
+    min-width: 200px;
+} */
+/* Cell fixed width */
+.MuiTableCell-alignLeft {
+    text-align: left;
+    max-width: 302px;
+}
+
+.MuiTableSortLabel-root:hover {
+    color: #fdfdfd !important;
+  }
+
+  .MuiTableSortLabel-root.MuiTableSortLabel-active {
+    color: rgba(255, 255, 255, 0.87) !important;
+  }
+  .MuiTableSortLabel-root:focus {
+    color: rgb(255, 255, 255) !important;
+  }
+  div#responsive-dialog-title {
+    background: #194ad2fc;
+    color: #fff0f0;
+  }
+  .MuiTableSortLabel-root.MuiTableSortLabel-active.MuiTableSortLabel-root.MuiTableSortLabel-active .MuiTableSortLabel-icon {
+    color: #ababab!important;
+    opacity: 1;
+}
+span.material-icons.MuiIcon-root.MuiTableSortLabel-icon.MuiTableSortLabel-iconDirectionAsc:hover {
+    color: #ababab!important;
+    opacity: 1;
+}
+
+
+.MuiTableSortLabel-root:hover span.material-icons.MuiIcon-root.MuiTableSortLabel-icon.MuiTableSortLabel-iconDirectionAsc{
+    color: #ababab!important;
+    opacity: 1;
 }

@@ -5,6 +5,10 @@ import "./App.css";
 import { Table, useDialogToggle, FormDialog, ProgressIndicator, useFormData, useCurrentItem } from "Components";
 import { useState } from "react";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
+import ListAltIcon from "@material-ui/icons/ListAlt";
+import CreateIcon from "@material-ui/icons/Create";
+import { MTableToolbar } from "material-table";
+
 export const FormTypeContext = React.createContext("");
 // @ts-ignore
 export const FormikPropsContext = React.createContext<any>();
@@ -89,12 +93,16 @@ export function App() {
                         listName={"Submitted Projects"}
                         options={{
                           sorting: true,
+                          // exportButton: { csv: true, pdf: false },
                           exportButton: { csv: true, pdf: false },
-                          pageSize: 15,
+
+                          pageSize: 500,
+                          maxBodyHeight: 1080,
                           headerStyle: {
                             backgroundColor: "#212756",
                             color: "#FFF",
                           },
+                          // exportAllData: true,
                         }}
                         actions={[
                           {
@@ -111,8 +119,19 @@ export function App() {
                               });
                             },
                           },
+
                           (rowData: any) => ({
-                            icon: "edit",
+                            icon: () => (
+                              <CreateIcon
+                                style={{
+                                  fill: "rgba(255,255,255)",
+                                  fontSize: "31px",
+                                  background: "rgb(21 168 40)",
+                                  borderRadius: "39px",
+                                  padding: "6px",
+                                }}
+                              />
+                            ),
                             tooltip: "Edit Project",
                             onClick: (event: any, rowData: any) => {
                               dispatch({ trigger: "initial", initialValue: rowData.ProjectScore_x002d_hidden });
@@ -122,6 +141,28 @@ export function App() {
                               console.log("rowData :>> ", rowData);
                             },
                           }),
+                          //!replaced with click link to view project
+                          // (rowData: any) => ({
+                          //   icon: () => (
+                          //     <ListAltIcon
+                          //       style={{
+                          //         fill: "rgb(255,255,255)",
+                          //         fontSize: "31px",
+                          //         background: "rgb(113, 111, 111)",
+                          //         borderRadius: "39px",
+                          //         padding: "6px",
+                          //       }}
+                          //     />
+                          //   ),
+                          //   tooltip: "View Project",
+                          //   onClick: (event: any, rowData: any) => {
+                          //     dispatch({ trigger: "initial", initialValue: rowData.ProjectScore_x002d_hidden });
+                          //     handleDialogOpen();
+                          //     handleFormType("View");
+                          //     setCurrentItem(rowData);
+                          //     console.log("rowData :>> ", rowData);
+                          //   },
+                          // }),
                         ]}
                       />{" "}
                       <FormDialog dialogStatus={dialogStatus} />

@@ -59,12 +59,12 @@ export const Table: FC<TableProps> = ({ listName, options, tableTitle, actions }
 
     // console.log("list.columns :>> ", list.columns);
 
-    const handleViewChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const handleViewChange = (event: React.ChangeEvent<{ value: any }>) => {
       setView(event.target.value);
       for (let i = 0; i < list.views.length; i++) {
-        if (event.target.value === list.viewColumns[i].viewTitle) {
-          setColumns(list.viewColumns[i].fields);
-          setSortColumns(list.views[i].sort);
+        if (event.target.value === list.viewColumns[i]?.viewTitle) {
+          setColumns(list.viewColumns[i]?.fields);
+          setSortColumns(list.views[i]?.sort);
         }
       }
     };
@@ -91,7 +91,7 @@ export const Table: FC<TableProps> = ({ listName, options, tableTitle, actions }
 
             <Select labelId="viewsDropDownLabel" value={view} onChange={handleViewChange} label="Views">
               {list.views.map((view: any) => {
-                return <MenuItem value={view.title}>{view.title}</MenuItem>;
+                if (view?.title !== "RssView") return <MenuItem value={view?.title}>{view?.title}</MenuItem>;
               })}
             </Select>
           </FormControl>
@@ -104,7 +104,12 @@ export const Table: FC<TableProps> = ({ listName, options, tableTitle, actions }
 
   useEffect(() => {
     populateTable();
+    console.log("columns :>> ", columns);
   }, [refreshDataContext.refresh]);
+
+  useEffect(() => {
+    console.log("columns :>> ", columns);
+  }, [isLoading]);
   return (
     <>
       <MaterialTable

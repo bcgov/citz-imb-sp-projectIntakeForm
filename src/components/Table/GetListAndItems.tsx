@@ -2,6 +2,7 @@ import React from "react";
 
 import { GetList, GetListItems } from "citz-imb-sp-utilities";
 import Moment from "react-moment";
+import moment from "moment";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
 const getList = async (listName: string) => {
   let list = await GetList({
@@ -81,7 +82,12 @@ const getListItems = async (listName: string, list: any) => {
           } else if (value.Title || value.__metadata || value.__deferred) {
             itemFormatted[key] = "";
           } else {
-            itemFormatted[key] = value;
+            if (key === "StartDate" || key === "FinishDate" || key === "Modified" || key === "Created_x0020_Date" || key === "Created") {
+              //@ts-ignore
+              itemFormatted[key] = moment(value).format("YYYY-MM-DD");
+            } else {
+              itemFormatted[key] = value;
+            }
           }
         } else if (key === "StartDate" || key === "FinishDate") {
           itemFormatted[key] = null;
@@ -91,18 +97,17 @@ const getListItems = async (listName: string, list: any) => {
     }
     return itemsFormatted;
   };
+  console.log("formattedItems :>> ", formattedItems());
   return formattedItems;
 };
 
 // console.log("items :>> ", items);
-// return items;
 
 export const GetListAndItems = async (listName: string, handleFormTypeContext: any, currentItemContext: any, dialogToggleContext: any) => {
   let title, columns, views, list: any, items;
   list = await getList(listName);
   items = await getListItems(listName, list);
-  views = list.Views.results.map((view: Object) => {
-    //@ts-ignore
+  views = list.Views.results.map((view: any) => {
     return { title: view.Title, fields: view.ViewFields.Items.results, sort: view.ViewQuery };
   });
   // console.log("views :>> ", views);
@@ -124,6 +129,16 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
       //@ts-ignore
       title: listColumns[field].Title,
       field: field,
+
+      customSort: (a: any, b: any) => {
+        if (a[field] < b[field]) {
+          return -1;
+        }
+        if (a[field] > b[field]) {
+          return 1;
+        }
+        return 0;
+      },
     };
     //@ts-ignore
     if (listColumns[field].FieldTypeKind === 4) {
@@ -171,6 +186,16 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
           </a>
         );
       };
+
+      fieldObject.customSort = (a: any, b: any) => {
+        if (a.Title.toLowerCase() < b.Title.toLowerCase()) {
+          return -1;
+        }
+        if (a.Title.toLowerCase() > b.Title.toLowerCase()) {
+          return 1;
+        }
+        return 0;
+      };
     }
 
     if (field === "Attachments") {
@@ -187,6 +212,7 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
 
   let viewColumns: any = [];
   for (let i = 0; i < list.Views.results.length; i++) {
+    console.log("list.Views.results[i].Title :>> ", list.Views.results[i].Title);
     viewColumns.push({
       viewTitle: list.Views.results[i].Title,
       fields: list.Views.results[i].ViewFields.Items.results.map((field: string) => {
@@ -195,6 +221,15 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
           //@ts-ignore
           title: listColumns[field].Title,
           field: field,
+          customSort: (a: any, b: any) => {
+            if (a[field] < b[field]) {
+              return -1;
+            }
+            if (a[field] > b[field]) {
+              return 1;
+            }
+            return 0;
+          },
         };
         //@ts-ignore
         if (listColumns[field].FieldTypeKind === 4) {
@@ -228,14 +263,35 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
         if (field === "LinkTitle") {
           //@ts-ignore
           viewColumns.render = (rowdata) => {
-            return <>{rowdata.Title}</>;
+            return (
+              <a
+                href="#"
+                onClick={() => {
+                  dialogToggleContext.open();
+                  handleFormTypeContext("View");
+                  currentItemContext.handleCurrentItem(rowdata);
+                }}
+              >
+                {rowdata.Title}
+              </a>
+            );
+          };
+
+          viewColumns.customSort = (a: any, b: any) => {
+            if (a.Title < b.Title) {
+              return -1;
+            }
+            if (a.Title > b.Title) {
+              return 1;
+            }
+            return 0;
           };
         }
         return viewColumns;
       }),
     });
   }
-
+  console.log("viewColumns :>> ", viewColumns);
   // viewColumns = list.Views.results.map((views: string) => {
   //   viewColumns.push({ title: list.Views.results.ViewFields.Items.results, field: list.Views.results.Title });
   //   console.log("viewColumns :>> ", viewColumns);
@@ -248,6 +304,8 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
   for (let i = 0; i < XMLTagName.length; i++) {
     viewSortBy.push({ sortTitle: XMLTagName[i].getAttribute("Name"), ascending: XMLTagName[i].getAttribute("Ascending") });
   }
+
+  console.log("viewSortBy :>> ", viewSortBy);
   for (let i = 0; i < columns.length; i++) {
     if (columns[i].field === viewSortBy[0].sortTitle) {
       if (viewSortBy[0].ascending === null) {
@@ -256,31 +314,34 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
         columns[i].defaultSort = "desc";
       }
     }
-    if (columns[i].field === viewSortBy[1]?.sortTitle) {
-      if (viewSortBy[1]?.ascending === null) {
-        columns[i].defaultSort = "asc";
-      } else {
-        columns[i].defaultSort = "desc";
-      }
-    }
+    // ! Table can't sort on multiple columns
+
+    // if (columns[i].field === viewSortBy[1]?.sortTitle) {
+    //   if (viewSortBy[1]?.ascending === null) {
+    //     columns[i].defaultSort = "asc";
+    //   } else {
+    //     columns[i].defaultSort = "desc";
+    //   }
+    // }
   }
   //!Beautify needed
   for (let i = 0; i < viewColumns.length; i++) {
     for (let j = 0; j < viewColumns[i].fields.length; j++) {
       if (viewColumns[i].fields[j].field === viewSortBy[0]?.sortTitle) {
-        if (viewSortBy[1].ascending === null) {
+        if (viewSortBy[0]?.ascending === null) {
           viewColumns[i].fields[j].defaultSort = "asc";
         } else {
           viewColumns[i].fields[j].defaultSort = "desc";
         }
       }
-      if (viewColumns[i].fields[j].field === viewSortBy[1]?.sortTitle) {
-        if (viewSortBy[1].ascending === null) {
-          viewColumns[i].fields[j].defaultSort = "asc";
-        } else {
-          viewColumns[i].fields[j].defaultSort = "desc";
-        }
-      }
+      // ! Table can't sort on multiple columns
+      // if (viewColumns[i].fields[j].field === viewSortBy[1]?.sortTitle) {
+      //   if (viewSortBy[1].ascending === null) {
+      //     viewColumns[i].fields[j].defaultSort = "asc";
+      //   } else {
+      //     viewColumns[i].fields[j].defaultSort = "desc";
+      //   }
+      // }
     }
   }
   // console.log("viewColumns :>> ", viewColumns);
