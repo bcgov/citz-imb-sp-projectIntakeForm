@@ -49,57 +49,57 @@ export const AddFieldForm: React.FC<AddFieldFormProps> = ({ handleAddField }) =>
     handleAddField(formValues); //!ADD THIS BACK AFTER TESTING
     try {
       await CreateListFields(formValues.fieldType, "Submitted Projects", fieldTitleCamelCase, choices);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   return (
-    <Formik
-      onSubmit={(formValues) => {
-        HandleSubmit(formValues);
-      }}
-      initialValues={{ title: "" }}
-      // validationSchema={validationSchema}
-    >
-      {({ isValid, dirty, setFieldValue }) => (
-        <Form>
-          <Grid container spacing={3}>
-            <Grid item xs={4}>
-              <SingleLineTextField required={true} label={"Title"} name={"title"} toolTip={"Please enter a title for the field"} />
-            </Grid>
-            <br />
-            <Grid item xs={4}>
-              {" "}
-              <DropDown
-                label={"Field Type"}
-                name={"fieldType"}
-                choices={[
-                  { value: "Choice" },
-                  { value: "Person or Group" },
-                  { value: "Single Line of Text" },
-                  { value: "Multi Line of Text" },
-                  { value: "Date & Time" },
-                ]}
-                toolTip={"Please choose the field type"}
-                required={true}
-                handleShowChoices={handleShowChoices}
-                setFieldValue={setFieldValue}
-                setFieldName={"choices"}
-              />
-            </Grid>
-            <br />
-            {showChoices && (
-              <Grid item xs={4}>
-                <MultiLineTextField required={showChoices} label={"Choices"} name={"choices"} />
-              </Grid>
-            )}
-          </Grid>
-          <Button type="submit" variant="contained" color="primary">
-            Add Field
-          </Button>
-        </Form>
-      )}
-    </Formik>
+    <div></div>
+    // <Formik
+    //   onSubmit={(formValues) => {
+    //     HandleSubmit(formValues);
+    //   }}
+    //   initialValues={{ title: "" }}
+    //   // validationSchema={validationSchema}
+    // >
+    //   {({ isValid, dirty, setFieldValue }) => (
+    //     <Form>
+    //       <Grid container spacing={3}>
+    //         <Grid item xs={4}>
+    //           <SingleLineTextField required={true} label={"Title"} name={"title"} toolTip={"Please enter a title for the field"} />
+    //         </Grid>
+    //         <br />
+    //         <Grid item xs={4}>
+    //           {" "}
+    //           <DropDown
+    //             label={"Field Type"}
+    //             name={"fieldType"}
+    //             choices={[
+    //               { value: "Choice" },
+    //               { value: "Person or Group" },
+    //               { value: "Single Line of Text" },
+    //               { value: "Multi Line of Text" },
+    //               { value: "Date & Time" },
+    //             ]}
+    //             toolTip={"Please choose the field type"}
+    //             required={true}
+    //             handleShowChoices={handleShowChoices}
+    //             setFieldValue={setFieldValue}
+    //             setFieldName={"choices"}
+    //           />
+    //         </Grid>
+    //         <br />
+    //         {showChoices && (
+    //           <Grid item xs={4}>
+    //             <MultiLineTextField required={showChoices} label={"Choices"} name={"choices"} />
+    //           </Grid>
+    //         )}
+    //       </Grid>
+    //       <Button type="submit" variant="contained" color="primary">
+    //         Add Field
+    //       </Button>
+    //     </Form>
+    //   )}
+    // </Formik>
   );
 };
 

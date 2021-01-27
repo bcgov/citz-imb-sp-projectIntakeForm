@@ -16,7 +16,7 @@ interface NumberColumnProps {
   required?: boolean;
 }
 
-export const NumberColumn: FC<NumberColumnProps> = ({ label, name, toolTip, type, required }) => {
+export const NumberColumn: FC<NumberColumnProps> = ({ label, name, toolTip, type, required = false }) => {
   const HtmlTooltip = withStyles((theme: Theme) => ({
     tooltip: {
       backgroundColor: "#f5f5f9",
@@ -31,13 +31,14 @@ export const NumberColumn: FC<NumberColumnProps> = ({ label, name, toolTip, type
     <div>
       <CustomToolTip toolTip={toolTip} />
 
-      <Field name={name} required={required}>
+      <Field name={name}>
         {(fieldProps: any) => {
           const changeHandler = (event: any, value: any, reason: any) => {
             fieldProps.form.setFieldValue(name, value, false);
           };
           return (
             <CurrencyTextField
+              required={required}
               inputVariant="outlined"
               name={name}
               label={label}

@@ -9,6 +9,8 @@ import ListAltIcon from "@material-ui/icons/ListAlt";
 import CreateIcon from "@material-ui/icons/Create";
 import { MTableToolbar } from "material-table";
 
+import { CsvBuilder } from "filefy";
+
 export const FormTypeContext = React.createContext("");
 // @ts-ignore
 export const FormikPropsContext = React.createContext<any>();
@@ -76,6 +78,7 @@ export function App() {
   };
 
   const { handleFieldType } = useFormData(currentItem);
+
   return (
     <div className="App">
       {formType === "Submitting" ? (
@@ -95,7 +98,6 @@ export function App() {
                           sorting: true,
                           // exportButton: { csv: true, pdf: false },
                           exportButton: { csv: true, pdf: false },
-
                           pageSize: 500,
                           maxBodyHeight: 1080,
                           headerStyle: {

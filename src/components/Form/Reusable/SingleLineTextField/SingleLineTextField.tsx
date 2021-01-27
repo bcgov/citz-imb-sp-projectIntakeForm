@@ -33,7 +33,6 @@ export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name,
       <CustomToolTip toolTip={toolTip} />
 
       <Field
-        required={required}
         as={TextField}
         autoComplete="off"
         label={label}

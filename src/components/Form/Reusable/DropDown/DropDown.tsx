@@ -1,76 +1,29 @@
-import React, { FC, ReactNode, useContext, useState, useEffect } from "react";
+import React, { FC, ReactNode, useEffect, useContext, useState } from "react";
 import { Field, ErrorMessage, FieldInputProps } from "formik";
-import Grid from "@material-ui/core/Grid";
-import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
-import InfoIcon from "@material-ui/icons/Info";
-import { withStyles, Theme } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { ScoreContext, CustomToolTip } from "Components";
 import "../DropDown/DropDown.css";
-
-interface DropDownItem extends FieldInputProps<string> {
-  label: string;
-  value: string;
-}
+import { ScoreContext, CustomToolTip } from "Components";
 
 interface DropDownProps {
   choices: any[];
   label: string;
   name?: any;
-  toolTip?: string;
-  required?: boolean;
-  handleShowChoices?: Function;
-  setFieldValue?: Function;
-  setFieldName?: string;
-  editValue?: any;
+  toolTip: any;
 }
 
 interface MaterialUISelectFieldProps extends FieldInputProps<string> {
-  errorMessage?: string;
+  errorString?: string;
   children: ReactNode;
   label: string;
-  required?: boolean;
-  handleShowChoices?: Function;
-  setFieldValue?: Function;
-  setFieldName?: string;
-  editValue?: any;
 }
 
-const HtmlTooltip = withStyles((theme: Theme) => ({
-  tooltip: {
-    backgroundColor: "#f5f5f9",
-    color: "rgba(0, 0, 0, 0.87)",
-    maxWidth: 220,
-    fontSize: theme.typography.pxToRem(12),
-    border: "1px solid #dadde9",
-    display: "block",
-  },
-}))(Tooltip);
-
-const MaterialUISelectField: React.FC<MaterialUISelectFieldProps> = ({
-  errorMessage,
-  label,
-  children,
-  value,
-  name,
-  onChange,
-  onBlur,
-  required,
-  handleShowChoices = () => {},
-  setFieldValue = () => {
-    //console.log("no set Field Function Provided");
-  },
-  setFieldName,
-  editValue,
-}) => {
+const MaterialUISelectField: FC<MaterialUISelectFieldProps> = ({ errorString, label, children, value, name, onChange, onBlur }) => {
   const [previousComponentScore, setPreviousComponentScore] = useState<any>(0);
   const scoreContext: any = useContext(ScoreContext);
-
   useEffect(() => {
     setPreviousComponentScore(() => {
       if (isNaN(parseInt(value?.split("-")[1]))) {
@@ -82,7 +35,7 @@ const MaterialUISelectField: React.FC<MaterialUISelectFieldProps> = ({
     return;
   }, []);
   return (
-    <FormControl variant="outlined" fullWidth={true} required={required}>
+    <FormControl variant="outlined" fullWidth>
       <InputLabel>{label}</InputLabel>
       <Select
         name={name}
@@ -96,55 +49,32 @@ const MaterialUISelectField: React.FC<MaterialUISelectFieldProps> = ({
           }
           scoreContext.scoreDispatch({ currentItemScore: formattedComponentScore, previousItemScore: previousComponentScore });
           setPreviousComponentScore(formattedComponentScore);
-          handleShowChoices(event.target.value);
-          setFieldValue(setFieldName, "");
+
           onChange(event);
         }}
+        onBlur={onBlur}
         value={value}
       >
         {children}
       </Select>
-      <FormHelperText>{errorMessage}</FormHelperText>
+      <FormHelperText>{errorString}</FormHelperText>
     </FormControl>
   );
 };
 
-export const DropDown: FC<DropDownProps> = ({
-  setFieldName,
-  choices,
-  name,
-  label,
-  toolTip,
-  required,
-  handleShowChoices,
-  setFieldValue,
-  editValue = "",
-}) => {
-  // console.log("dropDownValue :>> ", choices);
+export const DropDown: FC<DropDownProps> = ({ choices, name, label, toolTip }) => {
   return (
-    <>
+    <div>
       <CustomToolTip toolTip={toolTip} />
 
-      <Field
-        variant={"outlined"}
-        handleShowChoices={handleShowChoices}
-        setFieldValue={setFieldValue}
-        name={name}
-        as={MaterialUISelectField}
-        label={label}
-        errorMessage={<ErrorMessage name={name} />}
-        required={required}
-        setFieldName={setFieldName}
-      >
-        {choices.map((choice, index) => {
-          return (
-            <MenuItem data-score={choice.score} key={choice.value} value={choice.value}>
-              {choice.label}
-            </MenuItem>
-          );
-        })}
+      <Field name={name} as={MaterialUISelectField} label={label} errorString={<ErrorMessage name={name} />}>
+        {choices.map((choice: any) => (
+          <MenuItem data-score={choice.score} key={choice.value} value={choice.value}>
+            {choice.label}
+          </MenuItem>
+        ))}
       </Field>
-    </>
+    </div>
   );
 };
 export default DropDown;

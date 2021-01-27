@@ -31,22 +31,16 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
 
   const [filesToUpload, setFilesToUpload] = useState<any>([]);
   const [initialValues, setIntitialValues] = useState<any>();
-  const [validationSchema, setValidationSchema] = useState(Yup.object().shape({}));
+  // const [validationSchema, setValidationSchema] = useState<any>(undefined);
   const [isLoading, setIsLoading] = useState(true);
 
   const dialogToggleContext: any = useContext(DialogToggleContext);
   const { formLayout } = useFormData(currentItem);
 
-  useEffect(() => {
-    setValidationSchema(() => {
-      let tempSchema: any = {};
-      formLayout.map((field: any) => {
-        if (field.Required) tempSchema[field.InternalName] = Yup.string().required(field.InternalName + " is required");
-      });
-      let schema = Yup.object().shape(tempSchema);
-      return schema;
-    });
-  }, []);
+  const validationSchema = Yup.object().shape({
+    Title: Yup.string().required("Project Name is required"),
+    Branch: Yup.string().required("Project Name is required"),
+  });
 
   useEffect(() => {
     setIntitialValues(() => {
@@ -62,20 +56,17 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
 
         return Object.keys(initialValues).length > 1 ? initialValues : undefined;
       } else {
-        let initialValues: any = {};
-        formLayout.map((field: any) => {
-          if (field.FieldType !== "Section") initialValues[field.InternalName] = field.defaultValue;
-        });
-        return initialValues;
+        return { StartDate: null, FinishDate: null }; //!make less static
       }
     });
   }, [formLayout]);
 
   useEffect(() => {
-    if (initialValues) {
+    if (initialValues && formLayout) {
       setIsLoading(false);
     }
-  }, [initialValues]);
+    console.log("initialValues!!! :>> ", initialValues);
+  }, [initialValues, formLayout]);
 
   const generateDOM = () => {
     let orderByYaxis = formLayout.sort(function (a: any, b: any) {
@@ -167,7 +158,7 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
         <div style={{ position: "absolute", left: "50%", top: "50%" }}>
           <CircularProgress />
         </div>
-      ) : (
+      ) : validationSchema !== undefined ? (
         <Formik initialValues={initialValues} onSubmit={handleFormSubmit} validationSchema={validationSchema}>
           {({ isValid, dirty, isSubmitting, validateForm }) => (
             <Form>
@@ -203,6 +194,10 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
             </Form>
           )}
         </Formik>
+      ) : (
+        <div style={{ position: "absolute", left: "50%", top: "50%" }}>
+          <CircularProgress />
+        </div>
       )}
     </>
   );

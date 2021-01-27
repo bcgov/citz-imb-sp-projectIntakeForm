@@ -44,7 +44,7 @@ export function getRender(title?: any, fieldType?: any, choices?: any, internalN
       // }
       break;
     case "Choice":
-      return <DropDown label={title} name={internalName} toolTip={description} required={required} choices={choices} />;
+      return <DropDown label={title} name={internalName} choices={choices} toolTip={description} />;
       // if (!returnedFields[i].DefaultValue) {
       //   returnedFields[i].DefaultValue = "";
       // }
