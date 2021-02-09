@@ -42,13 +42,10 @@ export const FormEditor = () => {
   };
 
   const handleAddField = (formValues: any) => {
-    console.log("formValues :>> ", formValues);
     addField(formValues.title);
   };
 
   const handleOnLayoutChange = (layout: any) => {
-    console.log("changeHappened :>> ", layout);
-    console.log("changeHappened layoutState :>> ", formLayout);
   };
 
   const defaultProps = {

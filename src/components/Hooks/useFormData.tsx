@@ -8,11 +8,21 @@ export const useFormData = (currentItem: any = "") => {
   let returnedSettings: any;
   let renderProperties: any;
 
+  //Production;
+  //@ts-ignore
+  // let _spPageContextInfo = window._spPageContextInfo;
+
+  //Dev
+
+  let _spPageContextInfo = {
+    webPermMasks: { High: 1073742320, Low: 2097093631 },
+  };
+
   let getSettings = async () => {
     returnedSettings = await GetFormSettings("IntakeForm Config");
     renderProperties = await GetFormFields("Submitted Projects");
     let layoutParse = JSON.parse(returnedSettings[0].JSON);
-
+    console.log("renderProperties :>> ", renderProperties);
     // sort returnedSettings so it's in alphabetical order, this allows both the renderProperties and returnedSettings to be in the same order.
     layoutParse.sort(function (a: any, b: any) {
       var textA = a.i.toUpperCase();
@@ -23,7 +33,7 @@ export const useFormData = (currentItem: any = "") => {
     for (let j = 0; j < renderProperties.length; j++) {
       renderPropertiesObject[renderProperties[j].InternalName] = renderProperties[j];
     }
-
+    //Two form layouts because some properties are not necessary for section headers
     setFormLayout(() => {
       let newLayout = layoutParse.map((field: any, index: number) => {
         if (field.TypeDisplayName === "section" || field.TypeDisplayName === "sectionDescription") {
@@ -49,14 +59,14 @@ export const useFormData = (currentItem: any = "") => {
             h: 1,
             i: field.i,
             title: renderPropertiesObject[field.i].Title,
-            fieldType: field.TypeDisplayName,
+            fieldType: renderPropertiesObject[field.i].TypeDisplayName,
             render: getRender(
               renderPropertiesObject[field.i].Title,
               renderPropertiesObject[field.i].FieldType,
               renderPropertiesObject[field.i].Choices,
               renderPropertiesObject[field.i].InternalName,
               renderPropertiesObject[field.i].Description,
-              renderPropertiesObject[field.i].Required,
+              renderPropertiesObject[field.i]?.Required,
               currentItem
             ),
             description: renderPropertiesObject[field.i].Description,
@@ -64,11 +74,18 @@ export const useFormData = (currentItem: any = "") => {
             internalName: renderPropertiesObject[field.i].InternalName,
             defaultValue: renderPropertiesObject[field.i].DefaultValue,
           };
-
-          return layout;
+          if (
+            //if user has full control, show Submission Status.  Adjust the high and low to match Full control perm mask
+            (_spPageContextInfo.webPermMasks.High !== 1073742320 || _spPageContextInfo.webPermMasks.Low !== 2097093631) &&
+            field.TypeDisplayName === "SubmissionStatus"
+          ) {
+          } else {
+            return layout;
+          }
         }
       });
-      return newLayout;
+      //returning with a filter because newlayout variable will have undefined object propoerties if user is not full control.  This results in a fail in another file that relies on these results.
+      return newLayout.filter((item: any) => item !== undefined);
     });
   };
 

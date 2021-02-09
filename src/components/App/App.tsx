@@ -9,8 +9,6 @@ import ListAltIcon from "@material-ui/icons/ListAlt";
 import CreateIcon from "@material-ui/icons/Create";
 import { MTableToolbar } from "material-table";
 
-import { CsvBuilder } from "filefy";
-
 export const FormTypeContext = React.createContext("");
 // @ts-ignore
 export const FormikPropsContext = React.createContext<any>();
@@ -49,6 +47,7 @@ export function App() {
     styleSheet.setAttribute("href", "https://fonts.googleapis.com/icon?family=Material+Icons");
     document.getElementsByTagName("head")[0].appendChild(styleSheet);
   };
+  const _filefy = require("filefy");
 
   useEffect(() => {
     GetPPScriptFiles();
@@ -79,8 +78,18 @@ export function App() {
 
   const { handleFieldType } = useFormData(currentItem);
 
+  //Production;
+  //@ts-ignore
+  // let _spPageContextInfo = window._spPageContextInfo;
+
+  //Dev
+
+  let _spPageContextInfo = {
+    webPermMasks: { High: 1073742320, Low: 2097093631 },
+  };
+
   return (
-    <div className="App">
+    <div className="App" style={{ width: "1732px" }}>
       {formType === "Submitting" ? (
         <ProgressIndicator />
       ) : (
@@ -97,40 +106,59 @@ export function App() {
                         options={{
                           sorting: true,
                           // exportButton: { csv: true, pdf: false },
-                          exportButton: { csv: true, pdf: false },
+                          // exportButton: { csv: true, pdf: false },
+                          exportButton:
+                            _spPageContextInfo.webPermMasks.High === 1073742320 && _spPageContextInfo.webPermMasks.Low === 2097093631
+                              ? { csv: true, pdf: false }
+                              : { csv: false, pdf: false },
+
                           pageSize: 500,
-                          maxBodyHeight: 1080,
+                          maxBodyHeight: 800,
                           headerStyle: {
                             backgroundColor: "#212756",
                             color: "#FFF",
                           },
+                          rowStyle: (_data: any, index: number, _level: number) => {
+                            return index % 2 ? { backgroundColor: "#ecf2f9" } : {};
+                          },
                           // exportAllData: true,
                         }}
                         actions={[
-                          {
-                            icon: () => <AddCircleIcon style={{ fill: "rgb(0 128 0 / 62%)", fontSize: "31px" }} />,
-                            tooltip: "Add Project",
-                            isFreeAction: true, //Allows you to add the button on it's own in the top right
-                            onClick: () => {
-                              handleDialogOpen();
-                              handleFormType("New");
-                              handleFormikProps({
-                                initialValues: { projectName: "", projectID: "", objective: "", projectOwner: "" },
-                                onSubmit: "",
-                                validationSchema: "",
-                              });
-                            },
-                          },
+                          _spPageContextInfo.webPermMasks.High === 1073742320 && _spPageContextInfo.webPermMasks.Low === 2097093631
+                            ? {
+                                icon: () => <AddCircleIcon style={{ fill: "rgb(0 128 0 / 62%)", fontSize: "31px" }} />,
+                                tooltip: "Add Project",
+                                isFreeAction: true, //Allows you to add the button on it's own in the top right
+                                onClick: () => {
+                                  handleDialogOpen();
+                                  handleFormType("New");
+                                  handleFormikProps({
+                                    initialValues: { projectName: "", projectID: "", objective: "", projectOwner: "" },
+                                    onSubmit: "",
+                                    validationSchema: "",
+                                  });
+                                },
+                              }
+                            : {
+                                icon: () => <AddCircleIcon style={{ fill: "rgb(0 128 0 / 62%)", fontSize: "31px" }} />,
+                                tooltip: "Add Project",
+                                isFreeAction: true, //Allows you to add the button on it's own in the top right
+                                onClick: () => {
+                                  handleDialogOpen();
+                                  handleFormType("New");
+                                },
+                                hidden: true,
+                              },
 
                           (rowData: any) => ({
                             icon: () => (
                               <CreateIcon
                                 style={{
-                                  fill: "rgba(255,255,255)",
-                                  fontSize: "31px",
-                                  background: "rgb(21 168 40)",
-                                  borderRadius: "39px",
-                                  padding: "6px",
+                                  color: "white",
+                                  fontSize: "19px",
+                                  padding: "5px",
+                                  borderRadius: "100px",
+                                  background: "green",
                                 }}
                               />
                             ),
@@ -140,7 +168,6 @@ export function App() {
                               handleDialogOpen();
                               handleFormType("Edit");
                               setCurrentItem(rowData);
-                              console.log("rowData :>> ", rowData);
                             },
                           }),
                           //!replaced with click link to view project

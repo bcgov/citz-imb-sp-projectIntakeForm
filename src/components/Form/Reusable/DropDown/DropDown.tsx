@@ -13,6 +13,7 @@ interface DropDownProps {
   label: string;
   name?: any;
   toolTip: any;
+  required: any;
 }
 
 interface MaterialUISelectFieldProps extends FieldInputProps<string> {
@@ -24,31 +25,31 @@ interface MaterialUISelectFieldProps extends FieldInputProps<string> {
 const MaterialUISelectField: FC<MaterialUISelectFieldProps> = ({ errorString, label, children, value, name, onChange, onBlur }) => {
   const [previousComponentScore, setPreviousComponentScore] = useState<any>(0);
   const scoreContext: any = useContext(ScoreContext);
-  useEffect(() => {
-    setPreviousComponentScore(() => {
-      if (isNaN(parseInt(value?.split("-")[1]))) {
-        return 0;
-      } else {
-        return parseInt(value?.split("-")[1]);
-      }
-    });
-    return;
-  }, []);
+  // useEffect(() => {
+  //   setPreviousComponentScore(() => {
+  //     if (isNaN(parseInt(value?.split("-")[1]))) {
+  //       return 0;
+  //     } else {
+  //       return parseInt(value?.split("-")[1]);
+  //     }
+  //   });
+  //   return;
+  // }, []);
   return (
     <FormControl variant="outlined" fullWidth>
-      <InputLabel>{label}</InputLabel>
+      {label}
       <Select
         name={name}
         onChange={(event: any) => {
           //The reason for "formattedComponentScore" is because not all choices will have a score value and they will return NaN if they don't have a score.  The apps reducer function has not been adjusted to account for NaN so we need to convert NaN to 0.
-          let formattedComponentScore: any;
-          if (Number.isNaN(event._targetInst.memoizedProps["data-score"])) {
-            formattedComponentScore = 0;
-          } else {
-            formattedComponentScore = event._targetInst.memoizedProps["data-score"];
-          }
-          scoreContext.scoreDispatch({ currentItemScore: formattedComponentScore, previousItemScore: previousComponentScore });
-          setPreviousComponentScore(formattedComponentScore);
+          // let formattedComponentScore: any;
+          // if (Number.isNaN(event._targetInst.memoizedProps["data-score"])) {
+          //   formattedComponentScore = 0;
+          // } else {
+          //   formattedComponentScore = event._targetInst.memoizedProps["data-score"];
+          // }
+          // scoreContext.scoreDispatch({ currentItemScore: formattedComponentScore, previousItemScore: previousComponentScore });
+          // setPreviousComponentScore(formattedComponentScore);
 
           onChange(event);
         }}
@@ -62,12 +63,17 @@ const MaterialUISelectField: FC<MaterialUISelectFieldProps> = ({ errorString, la
   );
 };
 
-export const DropDown: FC<DropDownProps> = ({ choices, name, label, toolTip }) => {
+export const DropDown: FC<DropDownProps> = ({ choices, name, label, toolTip, required }) => {
   return (
     <div>
       <CustomToolTip toolTip={toolTip} />
 
-      <Field name={name} as={MaterialUISelectField} label={label} errorString={<ErrorMessage name={name} />}>
+      <Field
+        name={name}
+        as={MaterialUISelectField}
+        label={<InputLabel>{required ? `${label} *` : label}</InputLabel>}
+        errorString={<ErrorMessage name={name} />}
+      >
         {choices.map((choice: any) => (
           <MenuItem data-score={choice.score} key={choice.value} value={choice.value}>
             {choice.label}

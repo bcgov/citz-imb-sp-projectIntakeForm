@@ -38,7 +38,6 @@ export const usePeoplePicker = () => {
       };
       //@ts-ignore
       const results = await RestCall(options);
-      console.log("results :>> ", JSON.parse(results.d.ClientPeoplePickerSearchUser));
       setSearchResults(JSON.parse(results.d.ClientPeoplePickerSearchUser));
     }
   };

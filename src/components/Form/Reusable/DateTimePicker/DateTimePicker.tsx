@@ -45,8 +45,8 @@ export const DateTimePicker: FC<DatePickerProps> = ({ label, name, required, too
           format={"MM/dd/yyyy"}
           fullWidth={true}
           autoOk={true}
-          label={label}
-        />
+          label={required ? `${label} *` : label}
+        ></Field>
       </MuiPickersUtilsProvider>
     </>
   );

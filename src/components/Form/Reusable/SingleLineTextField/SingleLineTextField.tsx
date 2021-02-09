@@ -35,7 +35,7 @@ export const SingleLineTextField: FC<SingleLineTextFieldProps> = ({ label, name,
       <Field
         as={TextField}
         autoComplete="off"
-        label={label}
+        label={required ? `${label} *` : label}
         fullWidth={true}
         type={type}
         variant={"outlined"}

@@ -32,11 +32,10 @@ export const MultiLineTextField: FC<MultiLineTextFieldProps> = ({ label, name, t
       <CustomToolTip toolTip={toolTip} />
 
       <Field
-        required={required}
         id="outlined-multiline-static"
         as={TextField}
         autoComplete="off"
-        label={label}
+        label={required ? `${label} *` : label}
         variant={"outlined"}
         fullWidth={true}
         multiline={true}

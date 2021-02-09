@@ -30,42 +30,66 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
   let formType = useContext(FormTypeContext);
 
   const [filesToUpload, setFilesToUpload] = useState<any>([]);
-  const [initialValues, setIntitialValues] = useState<any>();
-  // const [validationSchema, setValidationSchema] = useState<any>(undefined);
+  const [initialValues, setIntitialValues] = useState<any>({});
+  const [validationSchema, setValidationSchema] = useState<any>(undefined);
   const [isLoading, setIsLoading] = useState(true);
 
   const dialogToggleContext: any = useContext(DialogToggleContext);
   const { formLayout } = useFormData(currentItem);
-
-  const validationSchema = Yup.object().shape({
-    Title: Yup.string().required("Project Name is required"),
-    Branch: Yup.string().required("Project Name is required"),
-  });
+  // const validationSchema = Yup.object().shape({
+  //   Title: Yup.string().required("Project Name is required"),
+  //   Branch: Yup.string().required("Project Name is required"),
+  // });
 
   useEffect(() => {
     setIntitialValues(() => {
       if (currentItem) {
-        let initialValues: any = { ID: currentItem.ID };
-        Object.keys(currentItem).forEach((currentItemKey) => {
-          Object.keys(formLayout).forEach((formLayoutKey) => {
-            if (formLayout[formLayoutKey].i === currentItemKey) {
-              initialValues[currentItemKey] = currentItem[currentItemKey];
-            }
-          });
-        });
-
-        return Object.keys(initialValues).length > 1 ? initialValues : undefined;
+        // let initialValues: any = { ID: currentItem.ID };
+        // Object.keys(currentItem).forEach((currentItemKey) => {
+        //   Object.keys(formLayout).forEach((formLayoutKey) => {
+        //     console.log("formLayout[formLayoutKey] :>> ", formLayout[formLayoutKey]);
+        //     console.log("currentItem[currentItemKey] :>> ", currentItem[currentItemKey]);
+        //     if (formLayout[formLayoutKey].i === currentItemKey) {
+        //       initialValues[currentItemKey] = currentItem[currentItemKey];
+        //     }
+        //   });
+        // });
+        // return Object.keys(initialValues).length > 1 ? initialValues : undefined;
+        return currentItem;
       } else {
-        return { StartDate: null, FinishDate: null }; //!make less static
+        let tempInitialValues: any = {};
+
+        for (let i = 0; i < formLayout.length; i++) {
+          if (formLayout[i].internalName === "StartDate" || formLayout[i].internalName === "FinishDate") {
+            tempInitialValues[formLayout[i].internalName] = null;
+          } else {
+            tempInitialValues[formLayout[i].internalName] = "";
+          }
+        }
+        return tempInitialValues; //!make less static
       }
+    });
+    setValidationSchema(() => {
+      let tempSchema: any = {};
+      // formLayout.map((field: any) => {
+      //   if (field.Required) tempSchema[field.internalName] = Yup.string().required(field.internalName + " is required");
+      // });
+      for (let i = 0; i < formLayout.length; i++) {
+        if (formLayout[i].required) tempSchema[formLayout[i].internalName] = Yup.string().required(formLayout[i].title + " is required");
+      }
+      let schema = Yup.object().shape(tempSchema);
+      return schema;
     });
   }, [formLayout]);
 
   useEffect(() => {
-    if (initialValues && formLayout) {
+    if (formType === "New") {
+      if (Object.keys(initialValues).length > 0) {
+        setIsLoading(false);
+      }
+    } else {
       setIsLoading(false);
     }
-    console.log("initialValues!!! :>> ", initialValues);
   }, [initialValues, formLayout]);
 
   const generateDOM = () => {
@@ -94,29 +118,34 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
   };
 
   const handleFormSubmit = async (formValues: any, { setSubmitting }: any) => {
-    if (formType === "New") {
-      // //!add back after testing Date of note: 12-03-2020
-      try {
-        const CreateListItemResponse: any = await CreateListItem(formValues, "Submitted Projects", scoreContext.scoreState);
-        if (filesToUpload.length > 0) {
-          await HandleAttachments("Submitted Projects", CreateListItemResponse.d.ID, filesToUpload);
-        }
-      } catch (error) {}
-    } else {
-      try {
-        const UpdateListItemResponse = await UpdateListItem("Submitted Projects", formValues.ID, formValues, initialValues, scoreContext.scoreState);
+    console.log("formValues :>> ", formValues);
+    console.log("filesToUpload :>> ", filesToUpload);
+    console.log("formType :>> ", formType);
+    // if (formType === "New") {
+    //   console.log("NEW ");
+    //   // //!add back after testing Date of note: 12-03-2020
+    //   try {
+    //     const CreateListItemResponse: any = await CreateListItem(formValues, "Submitted Projects", initialValues, scoreContext.scoreState);
+    //     if (filesToUpload.length > 0) {
+    //       await HandleAttachments("Submitted Projects", CreateListItemResponse.data.d, filesToUpload);
+    //     }
+    //   } catch (error) {
+    //     console.log("error :>> ", error);
+    //   }
+    // } else {
+    //   try {
+    //     const UpdateListItemResponse = await UpdateListItem("Submitted Projects", formValues.ID, formValues, initialValues, scoreContext.scoreState);
 
-        if (filesToUpload.length > 0) {
-          await HandleAttachments("Submitted Projects", currentItem, filesToUpload);
-        }
-      } catch (error) {}
-    }
+    //     if (filesToUpload.length > 0) {
+    //       await HandleAttachments("Submitted Projects", currentItem, filesToUpload);
+    //     }
+    //   } catch (error) {}
+    // }
 
     // //@ts-ignore
     // dialogToggleContext.close();
     // setSubmitting(false);
     // refreshDataContext.handleRefresh();
-    // console.log("formValues :>> ", formValues);
   };
 
   const handleChangeStatus = ({ meta, remove, file }: any, status: any) => {
@@ -149,9 +178,7 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
       });
     }
   };
-  useEffect(() => {
-    console.log("filesToUpload :>> ", filesToUpload);
-  }, [filesToUpload]);
+  useEffect(() => {}, [filesToUpload]);
   return (
     <>
       {isLoading ? (
@@ -166,7 +193,7 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
                 <ProgressIndicator />
               ) : (
                 <>
-                  <Grid container spacing={3}>
+                  <Grid container spacing={2}>
                     {generateDOM()}
                     {formType === "Edit" ? <AttachmentViewer attachments={currentItem.AttachmentFiles.results} currentItemId={currentItem.Id} /> : ""}
 
@@ -174,21 +201,32 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
                   </Grid>
                   <br />
                   <br />
-                  <Button disabled={isSubmitting} type="submit" variant="contained" color="primary">
-                    Submit
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      // @ts-ignore
-                      dialogToggleContext.close();
-                      refreshDataContext.handleRefresh();
-                    }}
-                    variant="contained"
-                    color="secondary"
-                  >
-                    Close
-                  </Button>
+
+                  <Grid container spacing={3}>
+                    <Grid item xs={3}>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          // @ts-ignore
+                          dialogToggleContext.close();
+                          // refreshDataContext.handleRefresh();
+                        }}
+                        variant="contained"
+                        color="secondary"
+                        fullWidth
+                      >
+                        Cancel
+                      </Button>
+                    </Grid>
+                    <Grid item xs={3}></Grid>
+                    <Grid item xs={3}></Grid>
+
+                    <Grid item xs={3}>
+                      <Button disabled={isSubmitting} type="submit" variant="contained" color="primary" fullWidth>
+                        Submit
+                      </Button>
+                    </Grid>
+                  </Grid>
                 </>
               )}
             </Form>

@@ -15,14 +15,12 @@ interface ViewFormContentProps {
 }
 
 export const ViewFormContent: FC<ViewFormContentProps> = ({ currentItem }) => {
-  console.log("currentItem :>> ", currentItem);
   function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
 
   const { formLayout } = useFormData();
   const dialogToggle = useContext(DialogToggleContext);
-  console.log("formLayout :>> ", formLayout);
   const generateDOM = () => {
     let orderByYaxis = formLayout.sort(function (a: any, b: any) {
       var textA = a.y;
@@ -31,7 +29,6 @@ export const ViewFormContent: FC<ViewFormContentProps> = ({ currentItem }) => {
     });
 
     let formFields = orderByYaxis.map((field: any) => {
-      // console.log("field", field);
       if (field.w === 1) {
         field.w = 6;
       } else if (field.w === 2) {
@@ -43,7 +40,6 @@ export const ViewFormContent: FC<ViewFormContentProps> = ({ currentItem }) => {
           field.itemValue = value;
         }
       }
-      console.log("field :>> ", field);
       if (field.fieldType === "section") {
         return (
           <>
@@ -59,14 +55,28 @@ export const ViewFormContent: FC<ViewFormContentProps> = ({ currentItem }) => {
           </div>
         );
       } else if (field.fieldType === "StartDate" || field.fieldType === "FinishDate") {
+        if (field.itemValue !== null) {
+          return (
+            <Grid item xs={field.w}>
+              <ViewField
+                label={field.title}
+                name={field.internalName}
+                toolTip={field.description}
+                itemValue={<Moment format={"YYYY-MM-DD"}>{field.itemValue}</Moment>}
+              />
+            </Grid>
+          );
+        } else {
+          return (
+            <Grid item xs={field.w}>
+              <ViewField label={field.title} name={field.internalName} toolTip={field.description} itemValue="" />
+            </Grid>
+          );
+        }
+      } else if (field.fieldType === "Choice") {
         return (
           <Grid item xs={field.w}>
-            <ViewField
-              label={field.title}
-              name={field.internalName}
-              toolTip={field.description}
-              itemValue={<Moment format={"YYYY-MM-DD"}>{field.itemValue}</Moment>}
-            />
+            <ViewField label={field.title} name={field.internalName} toolTip={field.description} itemValue={field?.itemValue?.split("-")[0]} />
           </Grid>
         );
       } else {

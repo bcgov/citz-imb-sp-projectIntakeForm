@@ -5,12 +5,19 @@ import Moment from "react-moment";
 import moment from "moment";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
 const getList = async (listName: string) => {
-  let list = await GetList({
-    listName: listName,
-    expand: "DefaultView,DefaultView/ViewFields,Fields,Items,Views,Views/ViewFields,Forms",
-  });
-  //console.log("list :>> ", list);
-  return list;
+  try {
+    let list = await GetList({
+      listName: listName,
+      expand: "DefaultView,DefaultView/ViewFields,Fields,Items,Views,Views/ViewFields,Forms",
+      //@ts-ignore
+      "X-RequestDigest": document.getElementById("__REQUESTDIGEST").value,
+    });
+    //console.log("list :>> ", list);
+    return list;
+  } catch (error) {
+    alert(error);
+    return;
+  }
 };
 
 const getListItems = async (listName: string, list: any) => {
@@ -65,7 +72,6 @@ const getListItems = async (listName: string, list: any) => {
     expand: userFieldNamesExpand,
     select: userFieldNamesSelect,
   });
-  console.log("tempItems :>> ", tempItems);
   let formattedItems = () => {
     let itemsFormatted: any = [];
     for (let i = 0; i < tempItems.length; i++) {
@@ -97,15 +103,15 @@ const getListItems = async (listName: string, list: any) => {
     }
     return itemsFormatted;
   };
-  console.log("formattedItems :>> ", formattedItems());
   return formattedItems;
 };
 
 // console.log("items :>> ", items);
 
 export const GetListAndItems = async (listName: string, handleFormTypeContext: any, currentItemContext: any, dialogToggleContext: any) => {
-  let title, columns, views, list: any, items;
+  let title, columns, views, list: any, items, defaultViewName: any;
   list = await getList(listName);
+
   items = await getListItems(listName, list);
   views = list.Views.results.map((view: any) => {
     return { title: view.Title, fields: view.ViewFields.Items.results, sort: view.ViewQuery };
@@ -123,6 +129,7 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
   }
   // console.log("listColumns :>> ", listColumns);
   //Table Columns
+  defaultViewName = list.DefaultView;
   columns = list.DefaultView.ViewFields.Items.results.map((field: string) => {
     // console.log("fieldwqw12qdqw :>> ", field);
     let fieldObject: any = {
@@ -166,6 +173,12 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
       fieldObject.render = (rowdata: any) => {
         {
           return <div>{rowdata[field]}</div>;
+        }
+      };
+    } else if (listColumns[field].FieldTypeKind === 6) {
+      fieldObject.render = (rowdata: any) => {
+        {
+          return <div>{rowdata[field]?.split("-")[0]}</div>;
         }
       };
     }
@@ -212,7 +225,6 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
 
   let viewColumns: any = [];
   for (let i = 0; i < list.Views.results.length; i++) {
-    console.log("list.Views.results[i].Title :>> ", list.Views.results[i].Title);
     viewColumns.push({
       viewTitle: list.Views.results[i].Title,
       fields: list.Views.results[i].ViewFields.Items.results.map((field: string) => {
@@ -258,6 +270,12 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
               return <div>{rowdata[field]}</div>;
             }
           };
+        } else if (listColumns[field].FieldTypeKind === 6) {
+          viewColumns.render = (rowdata: any) => {
+            {
+              return <div>{rowdata[field]?.split("-")[0]}</div>;
+            }
+          };
         }
 
         if (field === "LinkTitle") {
@@ -291,7 +309,6 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
       }),
     });
   }
-  console.log("viewColumns :>> ", viewColumns);
   // viewColumns = list.Views.results.map((views: string) => {
   //   viewColumns.push({ title: list.Views.results.ViewFields.Items.results, field: list.Views.results.Title });
   //   console.log("viewColumns :>> ", viewColumns);
@@ -301,11 +318,11 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
   let parser: any = new DOMParser();
   let parsedXML = parser.parseFromString(list.Views.results[0].ViewQuery, "text/xml");
   let XMLTagName = parsedXML.getElementsByTagName("FieldRef");
-  for (let i = 0; i < XMLTagName.length; i++) {
-    viewSortBy.push({ sortTitle: XMLTagName[i].getAttribute("Name"), ascending: XMLTagName[i].getAttribute("Ascending") });
+  console.log("XMLTagName :>> ", XMLTagName);
+  for (let k = 0; k < XMLTagName.length; k++) {
+    viewSortBy.push({ sortTitle: XMLTagName[k].getAttribute("Name"), ascending: XMLTagName[k].getAttribute("Ascending") });
   }
 
-  console.log("viewSortBy :>> ", viewSortBy);
   for (let i = 0; i < columns.length; i++) {
     if (columns[i].field === viewSortBy[0].sortTitle) {
       if (viewSortBy[0].ascending === null) {
@@ -328,6 +345,7 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
   for (let i = 0; i < viewColumns.length; i++) {
     for (let j = 0; j < viewColumns[i].fields.length; j++) {
       if (viewColumns[i].fields[j].field === viewSortBy[0]?.sortTitle) {
+        console.log("viewSortBy[0]?.sortTitle :>> ", viewSortBy[0]?.sortTitle);
         if (viewSortBy[0]?.ascending === null) {
           viewColumns[i].fields[j].defaultSort = "asc";
         } else {
@@ -344,13 +362,9 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
       // }
     }
   }
-  // console.log("viewColumns :>> ", viewColumns);
-  // console.log("XMLTagName :>> ", XMLTagName);
-  // console.log("parsedXML :>> ", parsedXML);
-  //console.log("viewSortBy :>> ", viewSortBy);
-  //console.log("columns :>> ", columns);
-  //Name Ascending
-  // [1].getAttribute('category')
 
-  return { title, columns, views, items, viewColumns };
+  console.log("viewColumns :>> ", viewColumns);
+  console.log("viewSortBy :>> ", viewSortBy);
+
+  return { title, columns, views, items, viewColumns, list, defaultViewName };
 };

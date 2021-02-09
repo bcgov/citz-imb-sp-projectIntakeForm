@@ -56,15 +56,14 @@ export const Table: FC<TableProps> = ({ listName, options, tableTitle, actions }
     setIsLoading(true);
 
     const list: any = await GetListAndItems(listName, handleFormTypeContext, currentItemContext, dialogToggleContext);
-
-    // console.log("list.columns :>> ", list.columns);
+    console.log("list :>> ", list);
 
     const handleViewChange = (event: React.ChangeEvent<{ value: any }>) => {
       setView(event.target.value);
       for (let i = 0; i < list.views.length; i++) {
         if (event.target.value === list.viewColumns[i]?.viewTitle) {
           setColumns(list.viewColumns[i]?.fields);
-          setSortColumns(list.views[i]?.sort);
+          // setSortColumns(list.views[i]?.sort);
         }
       }
     };
@@ -79,7 +78,6 @@ export const Table: FC<TableProps> = ({ listName, options, tableTitle, actions }
     setData(list.items());
 
     setIsLoading(false);
-
     // console.log("listFromPopTable :>> ", list);
     // console.log("items", list.items);
     const x = {
@@ -89,7 +87,7 @@ export const Table: FC<TableProps> = ({ listName, options, tableTitle, actions }
           <FormControl className={classes.formControl}>
             <InputLabel id="viewsDropDownLabel">Views</InputLabel>
 
-            <Select labelId="viewsDropDownLabel" value={view} onChange={handleViewChange} label="Views">
+            <Select labelId="viewsDropDownLabel" defaultValue={list.defaultViewName.Title} value={view} onChange={handleViewChange} label="Views">
               {list.views.map((view: any) => {
                 if (view?.title !== "RssView") return <MenuItem value={view?.title}>{view?.title}</MenuItem>;
               })}
@@ -104,12 +102,9 @@ export const Table: FC<TableProps> = ({ listName, options, tableTitle, actions }
 
   useEffect(() => {
     populateTable();
-    console.log("columns :>> ", columns);
   }, [refreshDataContext.refresh]);
 
-  useEffect(() => {
-    console.log("columns :>> ", columns);
-  }, [isLoading]);
+  useEffect(() => {}, [isLoading]);
   return (
     <>
       <MaterialTable

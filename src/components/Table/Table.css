@@ -6,7 +6,7 @@
 /* Cell fixed width */
 .MuiTableCell-alignLeft {
     text-align: left;
-    max-width: 302px;
+    max-width: 400px;
 }
 
 .MuiTableSortLabel-root:hover {
@@ -36,4 +36,26 @@ span.material-icons.MuiIcon-root.MuiTableSortLabel-icon.MuiTableSortLabel-iconDi
 .MuiTableSortLabel-root:hover span.material-icons.MuiIcon-root.MuiTableSortLabel-icon.MuiTableSortLabel-iconDirectionAsc{
     color: #ababab!important;
     opacity: 1;
+}
+
+.makeStyles-formControl-1 {
+  margin: 8px!important;
+  min-width: 120px!important;
+  position: fixed!important;
+  top: -3px!important;
+  left: 251px!important
+}
+
+.MuiToolbar-root.MuiToolbar-regular.MTableToolbar-root-7.MuiToolbar-gutters {
+  min-width: 1000px!important;
+}
+
+.MuiFormControl-root.jss1 {
+  left: 229px!important;
+  top: 2px!important;
+  position: absolute!important;
+}
+
+td.MuiTableCell-root.MuiTableCell-body.MuiTableCell-alignLeft {
+  overflow-wrap: break-word;
 }

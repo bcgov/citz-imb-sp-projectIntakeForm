@@ -4,6 +4,14 @@
     padding: 16px 24px;
     background: #212756;
     margin-bottom: 29px!important;
-    color: white;
+    color: white!important;
     border-bottom: 2px solid #fcba19;
+}
+/* This makes it so view form text wraps instead of going beyong the field */
+p.MuiTypography-root.viewField.MuiTypography-body1 {
+    overflow-wrap: anywhere;
+}
+
+h2.MuiTypography-root.MuiTypography-h6 {
+    color: white!important;
 }

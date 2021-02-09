@@ -13,8 +13,10 @@ export const UpdateListItem = async (listName: string, itemId: number, formValue
     if (initialValues[key] === formValues[key]) {
       delete formValues[key];
       //@ts-ignore
-    } else if (typeof formValues[key] === Object) {
-      formValues[key] = formValues[key][0]?.EntityData?.SPUserID;
+    } else if (typeof formValues[key] === "object") {
+      console.log("formValues[key] :>> ", formValues[key]);
+      formValues[key + "Id"] = formValues[key].EntityData?.SPUserID;
+      delete formValues[key];
     }
   }
 
@@ -32,7 +34,7 @@ export const UpdateListItem = async (listName: string, itemId: number, formValue
     return new Promise((resolve, reject) => {
       let URL = APIurl + "/_api/lists/getbytitle('" + listName + "')/getItemById(" + itemId + ")";
       //Append metadata type to data
-      formValues.__metadata = { type: __metadata.data.d.results[0].__metadata.type };
+      formValues.__metadata = { type: "SP.Data.SubmittedProjectsListItem" };
       let configAxios = {
         headers: {
           Accept: "application/json;odata=verbose",

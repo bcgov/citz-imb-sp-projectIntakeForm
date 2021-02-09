@@ -38,13 +38,13 @@ export function getRender(title?: any, fieldType?: any, choices?: any, internalN
       // console.log("returnedFields[i].DefaultValue :>> ", returnedFields[i].DefaultValue, returnedFields[i].InternalName);
       break;
     case "DateTime":
-      return <DateTimePicker label={title} name={internalName} toolTip={description} editValue={currentItem} />;
+      return <DateTimePicker label={title} name={internalName} toolTip={description} editValue={currentItem} required={required} />;
       // if (!returnedFields[i].DefaultValue) {
       //   returnedFields[i].DefaultValue = null;
       // }
       break;
     case "Choice":
-      return <DropDown label={title} name={internalName} choices={choices} toolTip={description} />;
+      return <DropDown label={title} name={internalName} choices={choices} toolTip={description} required={required} />;
       // if (!returnedFields[i].DefaultValue) {
       //   returnedFields[i].DefaultValue = "";
       // }
@@ -53,15 +53,7 @@ export function getRender(title?: any, fieldType?: any, choices?: any, internalN
       return (
         <Field name={internalName}>
           {(fieldProps: any) => {
-            return (
-              <PeoplePicker
-                label={title}
-                name={internalName + "Id"}
-                setFieldValue={fieldProps.form.setFieldValue}
-                {...fieldProps}
-                currentItem={currentItem}
-              />
-            );
+            return <PeoplePicker name={internalName} label={title} {...fieldProps} currentItem={currentItem} required={required} />;
           }}
         </Field>
       );

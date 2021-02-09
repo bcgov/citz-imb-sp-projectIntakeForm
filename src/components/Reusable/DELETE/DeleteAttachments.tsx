@@ -21,7 +21,6 @@ export const DeleteAttachments = async (itemAttachmentName: any, itemId: any, li
     }
   )
     .then(() => {
-      console.log("ok");
     })
     .catch((error: any) => {
       console.log(JSON.stringify(error));

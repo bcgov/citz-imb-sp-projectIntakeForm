@@ -1,24 +1,18 @@
 import axios from "axios";
 import { GetUserId } from "Components";
 
-export const CreateListItem = async (formValues: any, listName: any, score: any) => {
-  let GetItemTypeForListName = (listName: any) => {
-    return "SP.Data." + listName.charAt(0).toUpperCase() + listName.split(" ").join("").slice(1) + "ListItem";
-  };
-
-  const getUserID = async (valueKey: any) => {
-    let userID: any = await GetUserId(valueKey);
-    return userID.data.d.Id;
-  };
-
+export const CreateListItem = async (formValues: any, listName: any, initialValues: any, score: any) => {
   for (var key in formValues) {
-    if (formValues[key] === null || formValues[key] === "" || formValues[key].length === 0) {
+    if (initialValues[key] === formValues[key]) {
+      delete formValues[key];
+      //@ts-ignore
+    } else if (typeof formValues[key] === "object") {
+      console.log("formValues[key] :>> ", formValues[key]);
+      formValues[key + "Id"] = formValues[key].EntityData?.SPUserID;
       delete formValues[key];
     }
-    if (Array.isArray(formValues[key])) {
-      formValues[key] = await getUserID(formValues[key][0].Key);
-    }
   }
+
   //Set score for item
   formValues["ProjectScore_x002d_hidden"] = score;
 
@@ -33,7 +27,7 @@ export const CreateListItem = async (formValues: any, listName: any, score: any)
   }
 
   formValues.__metadata = {
-    type: GetItemTypeForListName(listName),
+    type: "SP.Data.SubmittedProjectsListItem",
   };
 
   return new Promise((resolve, reject) => {
@@ -48,7 +42,7 @@ export const CreateListItem = async (formValues: any, listName: any, score: any)
       },
     })
       .then(function (listItem) {
-        console.log("listItem :>> ", listItem);
+        console.log("liteItem!!!! :>> ", listItem);
         resolve(listItem);
       })
       .catch((error) => {

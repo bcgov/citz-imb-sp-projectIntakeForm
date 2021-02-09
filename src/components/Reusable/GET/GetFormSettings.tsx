@@ -65,7 +65,6 @@ export function GetFormSettings(listName: string) {
   } else {
     APIurl = "http://localhost:8081";
   }
-  console.log("APIurl", APIurl);
 
   return new Promise((resolve, reject) => {
     axios({
