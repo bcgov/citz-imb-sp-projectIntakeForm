@@ -16,9 +16,11 @@ export const FormDialog: FC<FormDialogProps> = ({ dialogStatus }) => {
         <DialogTitle style={{ color: "white!important" }} id="form-dialog-title">
           Project Intake Form
         </DialogTitle>
-        <DialogContent>
-          <FormFrame />
-        </DialogContent>
+        {dialogStatus ? (
+          <DialogContent>
+            <FormFrame />
+          </DialogContent>
+        ) : null}
       </Dialog>
     </div>
   );

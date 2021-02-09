@@ -3,8 +3,11 @@ import { useState } from "react";
 export function useDialogToggle() {
   const [dialogStatus, setDialogStatus] = useState<any>();
 
-  const handleDialogClose: Function = () => {
+  const handleDialogClose: Function = (callback: any) => {
     setDialogStatus(false);
+    if (callback) {
+      callback();
+    }
   };
 
   const handleDialogOpen: Function = () => {
