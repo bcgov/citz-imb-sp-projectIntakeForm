@@ -1,12 +1,18 @@
 import axios from "axios";
 import { GetUserId } from "Components";
 
-export const CreateListItem = async (formValues: any, listName: any, initialValues: any, score: any) => {
+export const CreateListItem = async (
+  formValues: any,
+  listName: any,
+  initialValues: any,
+  score: any
+) => {
+  console.log("madeit");
   for (var key in formValues) {
     if (initialValues[key] === formValues[key]) {
       delete formValues[key];
       //@ts-ignore
-    } else if (typeof formValues[key] === "object") {
+    } else if (key === "ProjectLead" || key === "BusinessOwner") {
       console.log("formValues[key] :>> ", formValues[key]);
       formValues[key + "Id"] = formValues[key].EntityData?.SPUserID;
       delete formValues[key];
@@ -38,7 +44,9 @@ export const CreateListItem = async (formValues: any, listName: any, initialValu
       headers: {
         accept: "application/json;odata=verbose",
         "content-type": "application/json;odata=verbose",
-        "X-RequestDigest": (document.getElementById("__REQUESTDIGEST")! as HTMLTextAreaElement).value,
+        "X-RequestDigest": (document.getElementById(
+          "__REQUESTDIGEST"
+        )! as HTMLTextAreaElement).value,
       },
     })
       .then(function (listItem) {

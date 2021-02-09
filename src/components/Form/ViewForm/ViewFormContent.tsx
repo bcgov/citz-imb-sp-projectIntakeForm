@@ -3,7 +3,14 @@ import { Formik, Form } from "formik";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { useFormData, DialogToggleContext, ProgressIndicator, ViewField, AttachmentViewer, Section } from "Components";
+import {
+  useFormData,
+  DialogToggleContext,
+  ProgressIndicator,
+  ViewField,
+  AttachmentViewer,
+  Section,
+} from "Components";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import Paper from "@material-ui/core/Paper";
 import Moment from "react-moment";
@@ -12,9 +19,13 @@ import Typography from "@material-ui/core/Typography";
 
 interface ViewFormContentProps {
   currentItem: any;
+  handleCurrentItem: any;
 }
 
-export const ViewFormContent: FC<ViewFormContentProps> = ({ currentItem }) => {
+export const ViewFormContent: FC<ViewFormContentProps> = ({
+  currentItem,
+  handleCurrentItem,
+}) => {
   function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
@@ -54,7 +65,10 @@ export const ViewFormContent: FC<ViewFormContentProps> = ({ currentItem }) => {
             <Alert severity="info">{field.title}</Alert>
           </div>
         );
-      } else if (field.fieldType === "StartDate" || field.fieldType === "FinishDate") {
+      } else if (
+        field.fieldType === "StartDate" ||
+        field.fieldType === "FinishDate"
+      ) {
         if (field.itemValue !== null) {
           return (
             <Grid item xs={field.w}>
@@ -62,27 +76,44 @@ export const ViewFormContent: FC<ViewFormContentProps> = ({ currentItem }) => {
                 label={field.title}
                 name={field.internalName}
                 toolTip={field.description}
-                itemValue={<Moment format={"YYYY-MM-DD"}>{field.itemValue}</Moment>}
+                itemValue={
+                  <Moment format={"YYYY-MM-DD"}>{field.itemValue}</Moment>
+                }
               />
             </Grid>
           );
         } else {
           return (
             <Grid item xs={field.w}>
-              <ViewField label={field.title} name={field.internalName} toolTip={field.description} itemValue="" />
+              <ViewField
+                label={field.title}
+                name={field.internalName}
+                toolTip={field.description}
+                itemValue=""
+              />
             </Grid>
           );
         }
       } else if (field.fieldType === "Choice") {
         return (
           <Grid item xs={field.w}>
-            <ViewField label={field.title} name={field.internalName} toolTip={field.description} itemValue={field?.itemValue?.split("-")[0]} />
+            <ViewField
+              label={field.title}
+              name={field.internalName}
+              toolTip={field.description}
+              itemValue={field?.itemValue?.split("-")[0]}
+            />
           </Grid>
         );
       } else {
         return (
           <Grid item xs={field.w}>
-            <ViewField label={field.title} name={field.internalName} toolTip={field.description} itemValue={field.itemValue} />
+            <ViewField
+              label={field.title}
+              name={field.internalName}
+              toolTip={field.description}
+              itemValue={field.itemValue}
+            />
           </Grid>
         );
       }
@@ -99,14 +130,25 @@ export const ViewFormContent: FC<ViewFormContentProps> = ({ currentItem }) => {
       <Grid container spacing={3}>
         <Paper>
           <Typography variant="h6" gutterBottom>
-            <b>Created:</b> <Moment format="YYYY-MM-DD">{currentItem.Created_x0020_Date}</Moment> <b>by:</b> {currentItem.Author}
+            <b>Created:</b>{" "}
+            <Moment format="YYYY-MM-DD">
+              {currentItem.Created_x0020_Date}
+            </Moment>{" "}
+            <b>by:</b> {currentItem.Author}
           </Typography>
           <Typography variant="h6" gutterBottom>
-            <b>Last Modified:</b> <Moment format="YYYY-MM-DD">{currentItem.Last_x0020_Modified}</Moment> <b>by:</b> {currentItem.Editor}
+            <b>Last Modified:</b>{" "}
+            <Moment format="YYYY-MM-DD">
+              {currentItem.Last_x0020_Modified}
+            </Moment>{" "}
+            <b>by:</b> {currentItem.Editor}
           </Typography>
         </Paper>
         {generateDOM()}
-        <AttachmentViewer attachments={currentItem.AttachmentFiles.results} currentItemId={currentItem.Id} />
+        <AttachmentViewer
+          attachments={currentItem.AttachmentFiles.results}
+          currentItemId={currentItem.Id}
+        />
       </Grid>
 
       <br />
@@ -114,6 +156,7 @@ export const ViewFormContent: FC<ViewFormContentProps> = ({ currentItem }) => {
       <Button
         type="button"
         onClick={() => {
+          handleCurrentItem();
           // @ts-ignore
           dialogToggle.close();
         }}

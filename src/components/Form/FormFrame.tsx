@@ -1,6 +1,13 @@
 import React, { FC, useState, useEffect, Fragment, useContext } from "react";
 import { Formik, Form, Field } from "formik";
-import { InputFormContent, FormTypeContext, FormikPropsContext, FormEditor, ViewFormContent, CurrentItemContext } from "Components";
+import {
+  InputFormContent,
+  FormTypeContext,
+  FormikPropsContext,
+  FormEditor,
+  ViewFormContent,
+  CurrentItemContext,
+} from "Components";
 import Container from "@material-ui/core/Container";
 import "../../../node_modules/react-grid-layout/css/styles.css";
 import "../../../node_modules/react-resizable/css/styles.css";
@@ -24,7 +31,10 @@ export function FormFrame() {
         ) : formType === "Edit" ? (
           <InputFormContent currentItem={currentItem.currentItemValue} />
         ) : formType === "View" ? (
-          <ViewFormContent currentItem={currentItem.currentItemValue} />
+          <ViewFormContent
+            currentItem={currentItem.currentItemValue}
+            handleCurrentItem={currentItem.handleCurrentItem}
+          />
         ) : (
           ""
         )}

@@ -85,7 +85,7 @@ export const PeoplePicker: FC<PeoplePickerProps> = (props) => {
             reset();
           }, 100); //Time before execution
         }}
-        renderInput={(params) => (
+        renderInput={(params: any) => (
           <TextField
             className="reactTextInput"
             {...params}
