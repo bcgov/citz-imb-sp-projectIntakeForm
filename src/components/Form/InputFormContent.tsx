@@ -129,6 +129,7 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
         if (filesToUpload.length > 0) {
           await HandleAttachments("Submitted Projects", CreateListItemResponse.data.d, filesToUpload);
         }
+        window.location.reload();
       } catch (error) {
         console.log("error :>> ", error);
       }
@@ -139,9 +140,10 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
         if (filesToUpload.length > 0) {
           await HandleAttachments("Submitted Projects", currentItem, filesToUpload);
         }
+        window.location.reload();
       } catch (error) {}
     }
-    window.location.reload();
+    
 
     //@ts-ignore
     // dialogToggleContext.close();
@@ -149,36 +151,36 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
     // refreshDataContext.handleRefresh();
   };
 
-  const handleChangeStatus = ({ meta, remove, file }: any, status: any) => {
-    if (status === "rejected_file_type") {
-      alert("file Type not accepted");
-    } else if (status === "rejected_max_files") {
-      alert("exceeded max number of files");
-    } else if (status === "error_file_size") {
-      alert("File exceeds maximum allowed file size");
-    } else if (status === "error_validation") {
-      alert("File validation failed");
-    } else if (status === "upload timed out, lost connection to upload server") {
-      alert("exceeded max number of files");
-    } else if (status === "error_upload") {
-      alert("response has HTTP status code >= 400");
-    } else if (status === "done") {
-      setFilesToUpload((previousFiles: any) => {
-        let tempPreviousFiles = [...previousFiles];
-        let fileExists = false;
+  // const handleChangeStatus = ({ meta, remove, file }: any, status: any) => {
+  //   if (status === "rejected_file_type") {
+  //     alert("file Type not accepted");
+  //   } else if (status === "rejected_max_files") {
+  //     alert("exceeded max number of files");
+  //   } else if (status === "error_file_size") {
+  //     alert("File exceeds maximum allowed file size");
+  //   } else if (status === "error_validation") {
+  //     alert("File validation failed");
+  //   } else if (status === "upload timed out, lost connection to upload server") {
+  //     alert("exceeded max number of files");
+  //   } else if (status === "error_upload") {
+  //     alert("response has HTTP status code >= 400");
+  //   } else if (status === "done") {
+  //     setFilesToUpload((previousFiles: any) => {
+  //       let tempPreviousFiles = [...previousFiles];
+  //       let fileExists = false;
 
-        fileExists = previousFiles.find((file: any) => file.name === meta.name);
+  //       fileExists = previousFiles.find((file: any) => file.name === meta.name);
 
-        if (!fileExists) {
-          tempPreviousFiles.push(file);
-        } else {
-          remove();
-        }
+  //       if (!fileExists) {
+  //         tempPreviousFiles.push(file);
+  //       } else {
+  //         remove();
+  //       }
 
-        return tempPreviousFiles;
-      });
-    }
-  };
+  //       return tempPreviousFiles;
+  //     });
+  //   }
+  // };
   useEffect(() => {}, [filesToUpload]);
   return (
     <>
@@ -206,7 +208,7 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
                       ""
                     )}
 
-                    <Dropzone onChangeStatus={handleChangeStatus} />
+                    <Dropzone inputContent={<p style={{fontWeight:100}}>Add files by clicking here to browse or by dragging files and dropping them here</p>}/>
                   </Grid>
                   <br />
                   <br />

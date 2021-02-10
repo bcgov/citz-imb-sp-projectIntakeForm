@@ -27,6 +27,7 @@ export const RefreshDataContext = React.createContext<any>();
 export const HandleFormTypeContext = React.createContext<any>();
 
 const reducer = (state: any, score: any) => {
+  console.log("dispatch triggered");
   switch (score.trigger) {
     case "initial":
       return score.initialValue;
@@ -52,6 +53,10 @@ export function App() {
   useEffect(() => {
     GetPPScriptFiles();
   }, []);
+
+  useEffect(() => {
+    console.log("score :>> ", score);
+  }, [score]);
 
   const [dialogStatus, handleDialogClose, handleDialogOpen] = useDialogToggle();
   // const { currentItem, setCurentItem } = useCurrentItem();
