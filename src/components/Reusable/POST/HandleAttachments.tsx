@@ -1,4 +1,9 @@
-export const HandleAttachments = async (listName: any, listItem: any, filesToUpload: any) => {
+export const HandleAttachments = async (
+  listName: any,
+  listItem: any,
+  filesToUpload: any
+) => {
+  console.log("listItemedit", listItem);
   // console.log("filesToUpload :>> ", filesToUpload);
   //@ts-ignore
   let _spPageContextInfo = window._spPageContextInfo;
@@ -23,7 +28,9 @@ export const HandleAttachments = async (listName: any, listItem: any, filesToUpl
         headers: {
           accept: "application/json;odata=verbose",
           "content-type": "application/json;odata=verbose",
-          "X-RequestDigest": (document.getElementById("__REQUESTDIGEST")! as HTMLTextAreaElement).value,
+          "X-RequestDigest": (document.getElementById(
+            "__REQUESTDIGEST"
+          )! as HTMLTextAreaElement).value,
         },
         body: filesToUpload[i],
       }

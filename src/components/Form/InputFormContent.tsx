@@ -23,7 +23,9 @@ interface InputFormContentProps {
   currentItem?: any;
 }
 
-export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => {
+export const InputFormContent: FC<InputFormContentProps> = ({
+  currentItem,
+}) => {
   const scoreContext: any = useContext(ScoreContext);
   const refreshDataContext: any = useContext(RefreshDataContext);
 
@@ -60,7 +62,10 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
         let tempInitialValues: any = {};
 
         for (let i = 0; i < formLayout.length; i++) {
-          if (formLayout[i].internalName === "StartDate" || formLayout[i].internalName === "FinishDate") {
+          if (
+            formLayout[i].internalName === "StartDate" ||
+            formLayout[i].internalName === "FinishDate"
+          ) {
             tempInitialValues[formLayout[i].internalName] = null;
           } else {
             tempInitialValues[formLayout[i].internalName] = "";
@@ -75,7 +80,10 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
       //   if (field.Required) tempSchema[field.internalName] = Yup.string().required(field.internalName + " is required");
       // });
       for (let i = 0; i < formLayout.length; i++) {
-        if (formLayout[i].required) tempSchema[formLayout[i].internalName] = Yup.string().required(formLayout[i].title + " is required");
+        if (formLayout[i].required)
+          tempSchema[formLayout[i].internalName] = Yup.string().required(
+            formLayout[i].title + " is required"
+          );
       }
       let schema = Yup.object().shape(tempSchema);
       return schema;
@@ -98,7 +106,15 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
       var textBy = b.y;
       var textAx = a.x;
       var textBx = b.x;
-      return textAy < textBy ? -1 : textAy > textBy ? 1 : textAx < textBx ? -1 : textAx > textBx ? 1 : 0;
+      return textAy < textBy
+        ? -1
+        : textAy > textBy
+        ? 1
+        : textAx < textBx
+        ? -1
+        : textAx > textBx
+        ? 1
+        : 0;
     });
     let formFields = orderByYaxis.map((field: any) => {
       // console.log("field", field);
@@ -125,9 +141,18 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
       console.log("NEW ");
       // //!add back after testing Date of note: 12-03-2020
       try {
-        const CreateListItemResponse: any = await CreateListItem(formValues, "Submitted Projects", initialValues, scoreContext.scoreState);
+        const CreateListItemResponse: any = await CreateListItem(
+          formValues,
+          "Submitted Projects",
+          initialValues,
+          scoreContext.scoreState
+        );
         if (filesToUpload.length > 0) {
-          await HandleAttachments("Submitted Projects", CreateListItemResponse.data.d, filesToUpload);
+          await HandleAttachments(
+            "Submitted Projects",
+            CreateListItemResponse.data.d,
+            filesToUpload
+          );
         }
         window.location.reload();
       } catch (error) {
@@ -135,15 +160,24 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
       }
     } else {
       try {
-        const UpdateListItemResponse = await UpdateListItem("Submitted Projects", formValues.ID, formValues, initialValues, scoreContext.scoreState);
+        const UpdateListItemResponse = await UpdateListItem(
+          "Submitted Projects",
+          formValues.ID,
+          formValues,
+          initialValues,
+          scoreContext.scoreState
+        );
 
         if (filesToUpload.length > 0) {
-          await HandleAttachments("Submitted Projects", currentItem, filesToUpload);
+          await HandleAttachments(
+            "Submitted Projects",
+            currentItem,
+            filesToUpload
+          );
         }
-        window.location.reload();
+        // window.location.reload();
       } catch (error) {}
     }
-    
 
     //@ts-ignore
     // dialogToggleContext.close();
@@ -181,6 +215,39 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
   //     });
   //   }
   // };
+
+  const handleChangeStatus = ({ meta, remove, file }: any, status: any) => {
+    if (status === "rejected_file_type") {
+      alert("file Type not accepted");
+    } else if (status === "rejected_max_files") {
+      alert("exceeded max number of files");
+    } else if (status === "error_file_size") {
+      alert("File exceeds maximum allowed file size");
+    } else if (status === "error_validation") {
+      alert("File validation failed");
+    } else if (
+      status === "upload timed out, lost connection to upload server"
+    ) {
+      alert("exceeded max number of files");
+    } else if (status === "error_upload") {
+      alert("response has HTTP status code >= 400");
+    } else if (status === "done") {
+      setFilesToUpload((previousFiles: any) => {
+        let tempPreviousFiles = [...previousFiles];
+        let fileExists = false;
+
+        fileExists = previousFiles.find((file: any) => file.name === meta.name);
+
+        if (!fileExists) {
+          tempPreviousFiles.push(file);
+        } else {
+          remove();
+        }
+
+        return tempPreviousFiles;
+      });
+    }
+  };
   useEffect(() => {}, [filesToUpload]);
   return (
     <>
@@ -189,7 +256,11 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
           <CircularProgress />
         </div>
       ) : validationSchema !== undefined ? (
-        <Formik initialValues={initialValues} onSubmit={handleFormSubmit} validationSchema={validationSchema}>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleFormSubmit}
+          validationSchema={validationSchema}
+        >
           {({ isValid, dirty, isSubmitting, validateForm }) => (
             <Form>
               {isSubmitting ? (
@@ -199,16 +270,22 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
                   <Grid container spacing={2}>
                     {generateDOM()}
                     {formType === "Edit" ? (
-                      currentItem === undefined ? (
-                        <AttachmentViewer attachments={currentItem.AttachmentFiles.results} currentItemId={currentItem.Id} />
-                      ) : (
-                        ""
-                      )
+                      <AttachmentViewer
+                        attachments={currentItem.AttachmentFiles.results}
+                        currentItemId={currentItem.Id}
+                      />
                     ) : (
                       ""
                     )}
 
-                    <Dropzone inputContent={<p style={{fontWeight:100}}>Add files by clicking here to browse or by dragging files and dropping them here</p>}/>
+                    <Dropzone
+                      inputContent={
+                        <p style={{ fontWeight: 100 }}>
+                          Add files by clicking here to browse or by dragging
+                          files and dropping them here
+                        </p>
+                      }
+                    />
                   </Grid>
                   <br />
                   <br />
@@ -234,7 +311,13 @@ export const InputFormContent: FC<InputFormContentProps> = ({ currentItem }) => 
                     <Grid item xs={3}></Grid>
 
                     <Grid item xs={3}>
-                      <Button disabled={isSubmitting} type="submit" variant="contained" color="primary" fullWidth>
+                      <Button
+                        disabled={isSubmitting}
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                      >
                         Submit
                       </Button>
                     </Grid>

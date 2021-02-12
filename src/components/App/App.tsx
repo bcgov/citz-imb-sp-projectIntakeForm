@@ -2,7 +2,14 @@ import React, { useEffect, useReducer } from "react";
 
 import logo from "./logo.svg";
 import "./App.css";
-import { Table, useDialogToggle, FormDialog, ProgressIndicator, useFormData, useCurrentItem } from "Components";
+import {
+  Table,
+  useDialogToggle,
+  FormDialog,
+  ProgressIndicator,
+  useFormData,
+  useCurrentItem,
+} from "Components";
 import { useState } from "react";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import ListAltIcon from "@material-ui/icons/ListAlt";
@@ -45,7 +52,10 @@ export function App() {
   const GetPPScriptFiles: any = () => {
     const styleSheet = document.createElement("link");
     styleSheet.setAttribute("rel", "stylesheet");
-    styleSheet.setAttribute("href", "https://fonts.googleapis.com/icon?family=Material+Icons");
+    styleSheet.setAttribute(
+      "href",
+      "https://fonts.googleapis.com/icon?family=Material+Icons"
+    );
     document.getElementsByTagName("head")[0].appendChild(styleSheet);
   };
   const _filefy = require("filefy");
@@ -63,7 +73,12 @@ export function App() {
   const [currentItem, setCurrentItem] = useState();
   const [formType, setFormType] = useState("");
   const [formikProps, setFormikProps] = useState({
-    initialValues: { projectName: "", projectID: "", objective: "", projectOwner: "" },
+    initialValues: {
+      projectName: "",
+      projectID: "",
+      objective: "",
+      projectOwner: "",
+    },
     onSubmit: "",
     validationSchema: "",
   });
@@ -98,22 +113,39 @@ export function App() {
       {formType === "Submitting" ? (
         <ProgressIndicator />
       ) : (
-        <RefreshDataContext.Provider value={{ handleRefresh: handleRefresh, refresh: refresh }}>
+        <RefreshDataContext.Provider
+          value={{ handleRefresh: handleRefresh, refresh: refresh }}
+        >
           <FormikPropsContext.Provider value={formikProps}>
             <FormTypeContext.Provider value={formType}>
               <HandleFormTypeContext.Provider value={handleFormType}>
-                <ScoreContext.Provider value={{ scoreState: score, scoreDispatch: dispatch }}>
-                  <CurrentItemContext.Provider value={{ currentItemValue: currentItem, handleCurrentItem: setCurrentItem }}>
-                    <DialogToggleContext.Provider value={{ close: handleDialogClose, open: handleDialogOpen }}>
+                <ScoreContext.Provider
+                  value={{ scoreState: score, scoreDispatch: dispatch }}
+                >
+                  <CurrentItemContext.Provider
+                    value={{
+                      currentItemValue: currentItem,
+                      handleCurrentItem: setCurrentItem,
+                    }}
+                  >
+                    <DialogToggleContext.Provider
+                      value={{
+                        close: handleDialogClose,
+                        open: handleDialogOpen,
+                      }}
+                    >
                       {/* <DialogStatusContext.Provider value={dialogStatus}> */}
                       <Table
                         listName={"Submitted Projects"}
                         options={{
+                          draggable: false,
                           sorting: true,
                           // exportButton: { csv: true, pdf: false },
                           // exportButton: { csv: true, pdf: false },
                           exportButton:
-                            _spPageContextInfo.webPermMasks.High === 1073742320 && _spPageContextInfo.webPermMasks.Low === 2097093631
+                            _spPageContextInfo.webPermMasks.High ===
+                              1073742320 &&
+                            _spPageContextInfo.webPermMasks.Low === 2097093631
                               ? { csv: true, pdf: false }
                               : { csv: false, pdf: false },
 
@@ -123,29 +155,55 @@ export function App() {
                             backgroundColor: "#212756",
                             color: "#FFF",
                           },
-                          rowStyle: (_data: any, index: number, _level: number) => {
-                            return index % 2 ? { backgroundColor: "#ecf2f9" } : {};
+                          rowStyle: (
+                            _data: any,
+                            index: number,
+                            _level: number
+                          ) => {
+                            return index % 2
+                              ? { backgroundColor: "#ecf2f9" }
+                              : {};
                           },
                           // exportAllData: true,
                         }}
                         actions={[
-                          _spPageContextInfo.webPermMasks.High === 1073742320 && _spPageContextInfo.webPermMasks.Low === 2097093631
+                          _spPageContextInfo.webPermMasks.High === 1073742320 &&
+                          _spPageContextInfo.webPermMasks.Low === 2097093631
                             ? {
-                                icon: () => <AddCircleIcon style={{ fill: "rgb(0 128 0 / 62%)", fontSize: "31px" }} />,
+                                icon: () => (
+                                  <AddCircleIcon
+                                    style={{
+                                      fill: "rgb(0 128 0 / 62%)",
+                                      fontSize: "31px",
+                                    }}
+                                  />
+                                ),
                                 tooltip: "Add Project",
                                 isFreeAction: true, //Allows you to add the button on it's own in the top right
                                 onClick: () => {
                                   handleDialogOpen();
                                   handleFormType("New");
                                   handleFormikProps({
-                                    initialValues: { projectName: "", projectID: "", objective: "", projectOwner: "" },
+                                    initialValues: {
+                                      projectName: "",
+                                      projectID: "",
+                                      objective: "",
+                                      projectOwner: "",
+                                    },
                                     onSubmit: "",
                                     validationSchema: "",
                                   });
                                 },
                               }
                             : {
-                                icon: () => <AddCircleIcon style={{ fill: "rgb(0 128 0 / 62%)", fontSize: "31px" }} />,
+                                icon: () => (
+                                  <AddCircleIcon
+                                    style={{
+                                      fill: "rgb(0 128 0 / 62%)",
+                                      fontSize: "31px",
+                                    }}
+                                  />
+                                ),
                                 tooltip: "Add Project",
                                 isFreeAction: true, //Allows you to add the button on it's own in the top right
                                 onClick: () => {
@@ -169,7 +227,10 @@ export function App() {
                             ),
                             tooltip: "Edit Project",
                             onClick: (event: any, rowData: any) => {
-                              dispatch({ trigger: "initial", initialValue: rowData.ProjectScore_x002d_hidden });
+                              dispatch({
+                                trigger: "initial",
+                                initialValue: rowData.ProjectScore_x002d_hidden,
+                              });
                               handleDialogOpen();
                               handleFormType("Edit");
                               setCurrentItem(rowData);

@@ -8,7 +8,8 @@ const getList = async (listName: string) => {
   try {
     let list = await GetList({
       listName: listName,
-      expand: "DefaultView,DefaultView/ViewFields,Fields,Items,Views,Views/ViewFields,Forms",
+      expand:
+        "DefaultView,DefaultView/ViewFields,Fields,Items,Views,Views/ViewFields,Forms",
       //@ts-ignore
       "X-RequestDigest": document.getElementById("__REQUESTDIGEST").value,
     });
@@ -88,7 +89,13 @@ const getListItems = async (listName: string, list: any) => {
           } else if (value.Title || value.__metadata || value.__deferred) {
             itemFormatted[key] = "";
           } else {
-            if (key === "StartDate" || key === "FinishDate" || key === "Modified" || key === "Created_x0020_Date" || key === "Created") {
+            if (
+              key === "StartDate" ||
+              key === "FinishDate" ||
+              key === "Modified" ||
+              key === "Created_x0020_Date" ||
+              key === "Created"
+            ) {
               //@ts-ignore
               itemFormatted[key] = moment(value).format("YYYY-MM-DD");
             } else {
@@ -108,13 +115,22 @@ const getListItems = async (listName: string, list: any) => {
 
 // console.log("items :>> ", items);
 
-export const GetListAndItems = async (listName: string, handleFormTypeContext: any, currentItemContext: any, dialogToggleContext: any) => {
+export const GetListAndItems = async (
+  listName: string,
+  handleFormTypeContext: any,
+  currentItemContext: any,
+  dialogToggleContext: any
+) => {
   let title, columns, views, list: any, items, defaultViewName: any;
   list = await getList(listName);
 
   items = await getListItems(listName, list);
   views = list.Views.results.map((view: any) => {
-    return { title: view.Title, fields: view.ViewFields.Items.results, sort: view.ViewQuery };
+    return {
+      title: view.Title,
+      fields: view.ViewFields.Items.results,
+      sort: view.ViewQuery,
+    };
   });
   // console.log("views :>> ", views);
   title = list.Title;
@@ -137,24 +153,22 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
       title: listColumns[field].Title,
       field: field,
 
-      customSort: (a: any, b: any) => {
-        if (a[field] < b[field]) {
+      customSort: (a: any, b: any) => { //!!!!
+        console.log('a+b', a[field],b[field])
+        const aField = a[field] ?? ""
+        const bField = b[field] ?? ""
+
+        if (aField < bField) {
           return -1;
         }
-        if (a[field] > b[field]) {
+        if (aField > bField) {
           return 1;
         }
         return 0;
       },
     };
-    //@ts-ignore
-    if (listColumns[field].FieldTypeKind === 4) {
-      //datetime
-      //@ts-ignore
-      fieldObject.render = (rowdata) => {
-        return rowdata[field] === null ? undefined : <Moment format={"YYYY-MM-DD"}>{rowdata[field]}</Moment>;
-      };
-    } else if (
+
+    if (
       //@ts-ignore
       listColumns[field].FieldTypeKind === 3 //multilinetext
     ) {
@@ -227,86 +241,85 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
   for (let i = 0; i < list.Views.results.length; i++) {
     viewColumns.push({
       viewTitle: list.Views.results[i].Title,
-      fields: list.Views.results[i].ViewFields.Items.results.map((field: string) => {
-        // console.log("field :>> ", field);
-        let viewColumns: any = {
-          //@ts-ignore
-          title: listColumns[field].Title,
-          field: field,
-          customSort: (a: any, b: any) => {
-            if (a[field] < b[field]) {
-              return -1;
-            }
-            if (a[field] > b[field]) {
-              return 1;
-            }
-            return 0;
-          },
-        };
-        //@ts-ignore
-        if (listColumns[field].FieldTypeKind === 4) {
-          //datetime
-          //@ts-ignore
-          viewColumns.render = (rowdata) => {
-            return <Moment format={"YYYY-MM-DD"}>{rowdata[field]}</Moment>;
+      fields: list.Views.results[i].ViewFields.Items.results.map(
+        (field: string) => {
+          // console.log("field :>> ", field);
+          let viewColumns: any = {
+            //@ts-ignore
+            title: listColumns[field].Title,
+            field: field,
+            customSort: (a: any, b: any) => { //!!!!
+              console.log('a+b', a[field],b[field])
+              const aField = a[field] ?? ""
+              const bField = b[field] ?? ""
+      
+              if (aField < bField) {
+                return -1;
+              }
+              if (aField > bField) {
+                return 1;
+              }
+              return 0;
+            },
           };
-        } else if (
-          //@ts-ignore
-          listColumns[field].FieldTypeKind === 3 //multilinetext
-        ) {
-          //@ts-ignore
-          viewColumns.render = (rowdata) => {
-            return (
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: rowdata[field],
-                }}
-              />
-            );
-          };
-        } else if (listColumns[field].FieldTypeKind === 20) {
-          viewColumns.render = (rowdata: any) => {
-            {
-              return <div>{rowdata[field]}</div>;
-            }
-          };
-        } else if (listColumns[field].FieldTypeKind === 6) {
-          viewColumns.render = (rowdata: any) => {
-            {
-              return <div>{rowdata[field]?.split("-")[0]}</div>;
-            }
-          };
-        }
+          if (
+            //@ts-ignore
+            listColumns[field].FieldTypeKind === 3 //multilinetext
+          ) {
+            //@ts-ignore
+            viewColumns.render = (rowdata) => {
+              return (
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: rowdata[field],
+                  }}
+                />
+              );
+            };
+          } else if (listColumns[field].FieldTypeKind === 20) {
+            viewColumns.render = (rowdata: any) => {
+              {
+                return <div>{rowdata[field]}</div>;
+              }
+            };
+          } else if (listColumns[field].FieldTypeKind === 6) {
+            viewColumns.render = (rowdata: any) => {
+              {
+                return <div>{rowdata[field]?.split("-")[0]}</div>;
+              }
+            };
+          }
 
-        if (field === "LinkTitle") {
-          //@ts-ignore
-          viewColumns.render = (rowdata) => {
-            return (
-              <a
-                href="#"
-                onClick={() => {
-                  dialogToggleContext.open();
-                  handleFormTypeContext("View");
-                  currentItemContext.handleCurrentItem(rowdata);
-                }}
-              >
-                {rowdata.Title}
-              </a>
-            );
-          };
+          if (field === "LinkTitle") {
+            //@ts-ignore
+            viewColumns.render = (rowdata) => {
+              return (
+                <a
+                  href="#"
+                  onClick={() => {
+                    dialogToggleContext.open();
+                    handleFormTypeContext("View");
+                    currentItemContext.handleCurrentItem(rowdata);
+                  }}
+                >
+                  {rowdata.Title}
+                </a>
+              );
+            };
 
-          viewColumns.customSort = (a: any, b: any) => {
-            if (a.Title < b.Title) {
-              return -1;
-            }
-            if (a.Title > b.Title) {
-              return 1;
-            }
-            return 0;
-          };
+            viewColumns.customSort = (a: any, b: any) => {
+              if (a.Title < b.Title) {
+                return -1;
+              }
+              if (a.Title > b.Title) {
+                return 1;
+              }
+              return 0;
+            };
+          }
+          return viewColumns;
         }
-        return viewColumns;
-      }),
+      ),
     });
   }
   // viewColumns = list.Views.results.map((views: string) => {
@@ -316,11 +329,17 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
   //!Beautify needed
   let viewSortBy: any[] = [];
   let parser: any = new DOMParser();
-  let parsedXML = parser.parseFromString(list.Views.results[0].ViewQuery, "text/xml");
+  let parsedXML = parser.parseFromString(
+    list.Views.results[0].ViewQuery,
+    "text/xml"
+  );
   let XMLTagName = parsedXML.getElementsByTagName("FieldRef");
   console.log("XMLTagName :>> ", XMLTagName);
   for (let k = 0; k < XMLTagName.length; k++) {
-    viewSortBy.push({ sortTitle: XMLTagName[k].getAttribute("Name"), ascending: XMLTagName[k].getAttribute("Ascending") });
+    viewSortBy.push({
+      sortTitle: XMLTagName[k].getAttribute("Name"),
+      ascending: XMLTagName[k].getAttribute("Ascending"),
+    });
   }
 
   for (let i = 0; i < columns.length; i++) {
@@ -364,7 +383,7 @@ export const GetListAndItems = async (listName: string, handleFormTypeContext: a
   }
 
   console.log("viewColumns :>> ", viewColumns);
-  console.log("viewSortBy :>> ", viewSortBy);
+  console.log("items :>> ", items());
 
   return { title, columns, views, items, viewColumns, list, defaultViewName };
 };
