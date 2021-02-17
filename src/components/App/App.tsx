@@ -83,6 +83,11 @@ export function App() {
     validationSchema: "",
   });
 
+  useEffect(() => {
+    //! delete when finished testing
+    console.log("currentItem State Change", currentItem);
+  }, [currentItem]);
+
   const handleFormType = (formTypePassed: string) => {
     setFormType(formTypePassed); //!change to hook that handles the field type
     handleFieldType(formTypePassed); //!change to hook that handles the field type
@@ -138,6 +143,7 @@ export function App() {
                       <Table
                         listName={"Submitted Projects"}
                         options={{
+                          thirdSortClick: false,
                           draggable: false,
                           sorting: true,
                           // exportButton: { csv: true, pdf: false },

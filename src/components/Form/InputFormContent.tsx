@@ -26,6 +26,8 @@ interface InputFormContentProps {
 export const InputFormContent: FC<InputFormContentProps> = ({
   currentItem,
 }) => {
+  console.log("currentItem Input Form Content", currentItem);
+
   const scoreContext: any = useContext(ScoreContext);
   const refreshDataContext: any = useContext(RefreshDataContext);
 
@@ -46,17 +48,6 @@ export const InputFormContent: FC<InputFormContentProps> = ({
   useEffect(() => {
     setIntitialValues(() => {
       if (currentItem) {
-        // let initialValues: any = { ID: currentItem.ID };
-        // Object.keys(currentItem).forEach((currentItemKey) => {
-        //   Object.keys(formLayout).forEach((formLayoutKey) => {
-        //     console.log("formLayout[formLayoutKey] :>> ", formLayout[formLayoutKey]);
-        //     console.log("currentItem[currentItemKey] :>> ", currentItem[currentItemKey]);
-        //     if (formLayout[formLayoutKey].i === currentItemKey) {
-        //       initialValues[currentItemKey] = currentItem[currentItemKey];
-        //     }
-        //   });
-        // });
-        // return Object.keys(initialValues).length > 1 ? initialValues : undefined;
         return currentItem;
       } else {
         let tempInitialValues: any = {};
@@ -134,7 +125,7 @@ export const InputFormContent: FC<InputFormContentProps> = ({
   };
 
   const handleFormSubmit = async (formValues: any, { setSubmitting }: any) => {
-    console.log("formValues :>> ", formValues);
+    console.log("formValues0 :>> ", formValues);
     console.log("filesToUpload :>> ", filesToUpload);
     console.log("formType :>> ", formType);
     if (formType === "New") {
@@ -159,6 +150,7 @@ export const InputFormContent: FC<InputFormContentProps> = ({
         console.log("error :>> ", error);
       }
     } else {
+      console.log("formValues1", formValues);
       try {
         const UpdateListItemResponse = await UpdateListItem(
           "Submitted Projects",
@@ -169,15 +161,18 @@ export const InputFormContent: FC<InputFormContentProps> = ({
         );
 
         if (filesToUpload.length > 0) {
+          console.log("formValues2", formValues);
+
           await HandleAttachments(
             "Submitted Projects",
-            currentItem,
+            formValues,
             filesToUpload
           );
         }
-        // window.location.reload();
+        window.location.reload();
       } catch (error) {}
     }
+    window.location.reload();
 
     //@ts-ignore
     // dialogToggleContext.close();
@@ -185,38 +180,13 @@ export const InputFormContent: FC<InputFormContentProps> = ({
     // refreshDataContext.handleRefresh();
   };
 
-  // const handleChangeStatus = ({ meta, remove, file }: any, status: any) => {
-  //   if (status === "rejected_file_type") {
-  //     alert("file Type not accepted");
-  //   } else if (status === "rejected_max_files") {
-  //     alert("exceeded max number of files");
-  //   } else if (status === "error_file_size") {
-  //     alert("File exceeds maximum allowed file size");
-  //   } else if (status === "error_validation") {
-  //     alert("File validation failed");
-  //   } else if (status === "upload timed out, lost connection to upload server") {
-  //     alert("exceeded max number of files");
-  //   } else if (status === "error_upload") {
-  //     alert("response has HTTP status code >= 400");
-  //   } else if (status === "done") {
-  //     setFilesToUpload((previousFiles: any) => {
-  //       let tempPreviousFiles = [...previousFiles];
-  //       let fileExists = false;
+  const handleChangeStatus = (
+    { meta, remove, file }: any,
+    status: any,
+    files: any
+  ) => {
+    console.log("test");
 
-  //       fileExists = previousFiles.find((file: any) => file.name === meta.name);
-
-  //       if (!fileExists) {
-  //         tempPreviousFiles.push(file);
-  //       } else {
-  //         remove();
-  //       }
-
-  //       return tempPreviousFiles;
-  //     });
-  //   }
-  // };
-
-  const handleChangeStatus = ({ meta, remove, file }: any, status: any) => {
     if (status === "rejected_file_type") {
       alert("file Type not accepted");
     } else if (status === "rejected_max_files") {
@@ -232,22 +202,12 @@ export const InputFormContent: FC<InputFormContentProps> = ({
     } else if (status === "error_upload") {
       alert("response has HTTP status code >= 400");
     } else if (status === "done") {
-      setFilesToUpload((previousFiles: any) => {
-        let tempPreviousFiles = [...previousFiles];
-        let fileExists = false;
-
-        fileExists = previousFiles.find((file: any) => file.name === meta.name);
-
-        if (!fileExists) {
-          tempPreviousFiles.push(file);
-        } else {
-          remove();
-        }
-
-        return tempPreviousFiles;
-      });
+      console.log("files", files);
+      console.log("file", file);
+      setFilesToUpload(files);
     }
   };
+
   useEffect(() => {}, [filesToUpload]);
   return (
     <>
@@ -270,15 +230,20 @@ export const InputFormContent: FC<InputFormContentProps> = ({
                   <Grid container spacing={2}>
                     {generateDOM()}
                     {formType === "Edit" ? (
-                      <AttachmentViewer
-                        attachments={currentItem.AttachmentFiles.results}
-                        currentItemId={currentItem.Id}
-                      />
+                      currentItem.AttachmentFiles?.results !== undefined ? (
+                        <AttachmentViewer
+                          attachments={currentItem.AttachmentFiles.results}
+                          currentItemId={currentItem.Id}
+                        />
+                      ) : (
+                        ""
+                      )
                     ) : (
                       ""
                     )}
 
                     <Dropzone
+                      onChangeStatus={handleChangeStatus}
                       inputContent={
                         <p style={{ fontWeight: 100 }}>
                           Add files by clicking here to browse or by dragging

@@ -23,6 +23,9 @@ export function FormFrame() {
   let formikProps: any = useContext(FormikPropsContext);
   let currentItem: any = useContext(CurrentItemContext);
 
+  useEffect(() => {
+    console.log("currentItemFormFrame", currentItem);
+  }, []);
   return (
     <>
       <Container maxWidth="lg">

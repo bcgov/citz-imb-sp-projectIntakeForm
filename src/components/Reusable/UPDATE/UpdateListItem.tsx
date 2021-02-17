@@ -16,13 +16,15 @@ export const UpdateListItem = async (
   formValues["ProjectScore_x002d_hidden"] = score;
 
   for (var key in formValues) {
-    if (initialValues[key] === formValues[key]) {
-      delete formValues[key];
-      //@ts-ignore
-    } else if (key === "ProjectLead" || key === "BusinessOwner") {
-      console.log("formValues[key] :>> ", formValues[key]);
-      formValues[key + "Id"] = formValues[key].EntityData?.SPUserID;
-      delete formValues[key];
+    if (key !== "Id") {
+      if (initialValues[key] === formValues[key]) {
+        delete formValues[key];
+        //@ts-ignore
+      } else if (key === "ProjectLead" || key === "BusinessOwner") {
+        console.log("formValues[key] :>> ", formValues[key]);
+        formValues[key + "Id"] = formValues[key].EntityData?.SPUserID;
+        delete formValues[key];
+      }
     }
   }
 

@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { GetFormFields, GetFormSettings, UpdateListItem, getRender } from "Components";
+import {
+  GetFormFields,
+  GetFormSettings,
+  UpdateListItem,
+  getRender,
+} from "Components";
 
 export const useFormData = (currentItem: any = "") => {
   const [formLayout, setFormLayout] = useState<any>([]);
@@ -10,13 +15,14 @@ export const useFormData = (currentItem: any = "") => {
 
   //Production;
   //@ts-ignore
-  // let _spPageContextInfo = window._spPageContextInfo;
+  let _spPageContextInfo = window._spPageContextInfo;
 
   //Dev
 
-  let _spPageContextInfo = {
-    webPermMasks: { High: 1073742320, Low: 2097093631 },
-  };
+  // let _spPageContextInfo = {
+  //   webPermMasks: { High: 2147483647, Low: 4294967295 },
+  //   // webPermMasks: { High: 176, Low: 138612833 },
+  // };
 
   let getSettings = async () => {
     returnedSettings = await GetFormSettings("IntakeForm Config");
@@ -31,12 +37,16 @@ export const useFormData = (currentItem: any = "") => {
     });
     let renderPropertiesObject: any = {};
     for (let j = 0; j < renderProperties.length; j++) {
-      renderPropertiesObject[renderProperties[j].InternalName] = renderProperties[j];
+      renderPropertiesObject[renderProperties[j].InternalName] =
+        renderProperties[j];
     }
     //Two form layouts because some properties are not necessary for section headers
     setFormLayout(() => {
       let newLayout = layoutParse.map((field: any, index: number) => {
-        if (field.TypeDisplayName === "section" || field.TypeDisplayName === "sectionDescription") {
+        if (
+          field.TypeDisplayName === "section" ||
+          field.TypeDisplayName === "sectionDescription"
+        ) {
           let layout: any = {};
           layout = {
             x: field.x,
@@ -74,13 +84,28 @@ export const useFormData = (currentItem: any = "") => {
             internalName: renderPropertiesObject[field.i].InternalName,
             defaultValue: renderPropertiesObject[field.i].DefaultValue,
           };
+
           if (
-            //if user has full control, show Submission Status.  Adjust the high and low to match Full control perm mask
-            (_spPageContextInfo.webPermMasks.High !== 1073742320 || _spPageContextInfo.webPermMasks.Low !== 2097093631) &&
-            field.TypeDisplayName === "SubmissionStatus"
+            renderPropertiesObject[field.i].InternalName !== "SubmissionStatus"
           ) {
-          } else {
             return layout;
+          } else {
+            console.log(
+              "_spPageContextInfo.webPermMasks",
+              _spPageContextInfo.webPermMasks
+            );
+            //if user has full control, show Submission Status.  Adjust the high and low to match Full control perm mask.  Site Collections Admins will also not be able to see this field regardless.
+
+            if (
+              (_spPageContextInfo.webPermMasks.High === 2147483647 &&
+                _spPageContextInfo.webPermMasks.Low === 4294967295) ||
+              (_spPageContextInfo.webPermMasks.High === 1073742320 &&
+                _spPageContextInfo.webPermMasks.Low === 2097093631)
+            ) {
+              return layout;
+            } else {
+              console.log("field.TypeDisplayName", field.TypeDisplayName);
+            }
           }
         }
       });

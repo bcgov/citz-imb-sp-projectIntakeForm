@@ -1,9 +1,9 @@
 export const HandleAttachments = async (
   listName: any,
-  listItem: any,
+  formValues: any,
   filesToUpload: any
 ) => {
-  console.log("listItemedit", listItem);
+  console.log("formValues3", formValues);
   // console.log("filesToUpload :>> ", filesToUpload);
   //@ts-ignore
   let _spPageContextInfo = window._spPageContextInfo;
@@ -19,9 +19,9 @@ export const HandleAttachments = async (
     await fetch(
       APIurl +
         "/_api/web/lists/getbytitle('Submitted Projects')/items(" +
-        listItem.Id +
+        formValues.Id +
         ")/AttachmentFiles/add(FileName='" +
-        filesToUpload[i].name +
+        filesToUpload[i].file.name +
         "')",
       {
         method: "POST",
@@ -32,7 +32,7 @@ export const HandleAttachments = async (
             "__REQUESTDIGEST"
           )! as HTMLTextAreaElement).value,
         },
-        body: filesToUpload[i],
+        body: filesToUpload[i].file,
       }
     );
   }

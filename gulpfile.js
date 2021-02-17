@@ -7,3 +7,5 @@ gulp.task("build-css", function () {
   return gulp.src("./build/static/css/*.css").pipe(concat("intakeFormApp.css")).pipe(gulp.dest("z:/css"));
 });
 gulp.task("default", gulp.parallel(["build-script", "build-css"]));
+
+
